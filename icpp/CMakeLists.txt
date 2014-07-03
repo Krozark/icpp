@@ -36,7 +36,7 @@ if(${WIN32})
     find_library(LIB_KERNEL kernel32)#dlopen
     set(LIBS ${LIB_PTHREAD} ${LIB_KERNEL})
 else()
-    find_library(LIB_çPTHREAD pthread)
+    find_library(LIB_PTHREAD pthread)
     find_library(LIB_DL dl)#dlopen
     set(LIBS ${LIB_PTHREAD} ${LIB_DL})
 endif()
