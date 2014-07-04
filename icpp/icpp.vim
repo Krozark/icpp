@@ -13,14 +13,13 @@ endif
 let s:cpo_save = &cpo
 set cpo&vim
 
-syn keyword icppSpecial         exit source
-syn keyword icppFlags           flags link
-syn keyword icppStatement       run compile
-syn keyword icppOperator        as with detached
-syn keyword icppBuiltin         help show print delete wget
+syn keyword icppSpecial         exit
+syn keyword icppOperator        as with
+syn keyword icppBuiltin         help show print delete
+syn keyword icppBuiltin         wget run compile source
 syn keyword icppImport          from import
-syn keyword icppType            char bool int float double string
-syn keyword icppStorage         auto const
+syn keyword icppType            char bool int float string tuple tab dict
+syn keyword icppStorage         auto
 syn keyword icppConstant        true false null
 syn keyword icppTodo            FIXME NOTE NOTES TODO XXX contained
 

@@ -80,27 +80,8 @@
 
 %%
 
-start: value {
+start:  {
      };
-
-str : T_DOUBLE_QUOTED_STRING {
-    $$=new std::string($1->substr(1,$1->length()-2));
-    DEL($1);
-    }
-    ;
-
-value : str        {
-      }
-      | T_NUMBER_I {
-      }
-      | T_NUMBER_F {
-      }
-      | T_BOOLEAN  {
-      }
-      | T_NULL     {
-      }
-      ;
-
 
 %%
 

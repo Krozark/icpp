@@ -1,3 +1,19 @@
+
+//types
+char c = 'c'
+bool b = true //false
+int i = 42
+float f = 43.2
+string s = "string_test"
+auto n = null
+auto test = 68
+
+tuple l = (42,"13","srn",63.5)
+tab t //= [44,43.5,"test"]
+dict di //= {"blah" : 44, "bhal2" : 54.8, "blah3" : "truc"}
+
+
+// import
 from "f.cpp" import print as p
 print p //function
 show p //type : function, return: ???, param: ???
@@ -17,18 +33,13 @@ print "end test import"
 print "end test import","blah"
 print "blah",p,"blah"
 
-char c = 'c'
-bool b = true
-int i = 42
-float f = 43.2
-double d = 44.5
-string s = "string_test"
 
-auto test = 68
-
+//print
 print test //68
 show test //type : int, value : 68
 
+
+//run
 run p(42) //synchon
 run p(i) //synchon
 run p(test) //synchon
@@ -41,9 +52,10 @@ thread_p.detach() //relase it
 
 delete thread_p
 
-run p(3) detached //asynchone
-run p(4) detached as thread_p //syntaxe error detached thread can't be stored
+run p(3) as detached //asynchone
 
+
+//compilation
 compile "f.cpp" as libf
 from libf import int print
 
@@ -55,9 +67,10 @@ compile "f.cpp", "f.cpp" with flags("o3","Wall") link(p) as libf4
 
 compile "127.0.0.1:8000/test.cpp" as libf5
 
+//extern source
 wget "127.0.0.1:8000/test.cpp" as wget_file
-
 source "file.icpp"
 
+help
 
 exit
