@@ -32,7 +32,17 @@
 	/*Prototype for the yylex function*/
 	static int yylex(icpp::Parser::semantic_type* yylval, icpp::Scanner& scanner);
 
+    #define DEBUG 1
+
     #define DEL(x) delete x; x=nullptr;
+
+    #ifdef DEBUG
+    #define PRINT(x) std::cout<<x<<std::endl;
+    #define PRINT_V(key,val) std::cout<<key<<"="<<val<<std::endl;
+    #else
+    #define PRINT(X) ;
+    #define PRINT_V(key,val) ;
+    #endif
 }
 
 
@@ -43,8 +53,7 @@
     bool            v_bool;
     char            v_char;
     int             v_int;
-    float           v_float;
-    double          v_double;
+    double          v_float;
     std::string*    v_string;
     // Pointers to more complex classes
     /*
@@ -56,32 +65,94 @@
 
     
 /** Declare tokens */
-%token      T_SQUARE_BRACKET_L        "square bracket left"
-%token      T_SQUARE_BRACKET_R        "square bracket right"
-%token      T_CURLY_BRACKET_L         "curry bracket left"
-%token      T_CURLY_BRACKET_R         "curry bracket right"
-%token      T_COMMA                   "coma"
-%token      T_COLON                   "colon"
+    /* specials */
+%token      T_EOL                   "end of line"
+%token      T_EQUAL                 "symbol ="
+%token      T_COMA                  "symbol ,"
+%token      T_COLON                 "symbol :"
+%token      T_BRACKET_OPEN          "symbol ("
+%token      T_BRACKET_CLOSE         "symbol )"
+%token      T_SQUARE_BRACKET_OPEN   "symbol ["
+%token      T_SQUARE_BRACKET_CLOSE  "symbol ]"
+%token      T_CURLY_BRACKET_OPEN    "symbol {"
+%token      T_CURLY_BRACKET_CLOSE   "symbol }"
+    /* pointer */
+%token      T_ASTERISK              "symbol *"
+%token      T_AMPERSAND             "symbol &"
+    /* kewords */
+%token      T_EXIT                  "keyword exit"
+    /* import */
+%token      T_IMPORT_FROM           "keyword from"
+%token      T_IMPORT_IMPORT         "keyword import"
+    /* operators */
 
-%token      T_NUMBER_I                "integer"
-%token      T_NUMBER_F                "float"
-%token      T_BOOLEAN                 "boolean"
-%token      T_NULL                    "null"
-%token      T_DOUBLE_QUOTED_STRING    "double quoted string"
+%token      T_OPERATOR_AS           "keyword as"
+%token      T_OPERATOR_WITH         "keyword with"
+    /* builtins */
+%token      T_B_HELP                "builtin function help"
+%token      T_B_PRINT               "builtin function print"
+%token      T_B_SHOW                "builtin function show"
+%token      T_B_DELETE              "builtin function delete"
+%token      T_B_WGET                "builtin function wget"
+%token      T_B_RUN                 "builtin function run"
+%token      T_B_COMPILE             "builtin function compile"
+%token      T_B_SOURCE              "builtin function source"
+    /* type */
+%token      T_TYPE_CHAR             "type char"
+%token      T_TYPE_BOOL             "type bool"
+%token      T_TYPE_INT              "type int"
+%token      T_TYPE_FLOAT            "type float"
+%token      T_TYPE_STRING           "type string"
+%token      T_TYPE_TUPLE            "type tuple"
+%token      T_TYPE_TAB              "type tab"
+%token      T_TYPE_DICT             "type dict"
+%token      T_TYPE_AUTO             "type auto"
+    /* values*/
+%token      T_VALUE_CHAR            "value char"
+%token      T_VALUE_BOOl            "value bool"
+%token      T_VALUE_INT             "value int"
+%token      T_VALUE_FLOAT           "value float"
+%token      T_VALUE_STRING          "value string"
+%token      T_VALUE_NULL            "value null"
+    /* identifier */
+%token      T_INDENTIFIER           "identifier"
+    
 
 
 %start start
 /** Define types for union values */
-%type<v_int>    T_NUMBER_I
-%type<v_float>  T_NUMBER_F
-%type<v_bool>   T_BOOLEAN
-%type<v_string> T_DOUBLE_QUOTED_STRING str
+%type<v_char>   T_VALUE_CHAR
+/*%type<v_bool>   T_VALUE_BOOL
+%type<v_int>    T_VALUE_INT
+%type<v_float>  T_VALUE_FLOAT
+%type<v_string> T_VALUE_STRING*/
+%type<v_string> T_INDENTIFIER
 
 
 %%
 
-start:  {
-     };
+start:  statements end {};
+
+end : T_EXIT {PRINT("EXIT")}
+
+statements : statement {}
+           | statements statement {};
+
+statement : T_EOL 
+          | affectation T_EOL
+          ;
+
+affectation : affectation_char
+            /*| affectation_bool
+            | affectation_int
+            | affectation_float
+            | affectation_string
+            | affectation_auto*/
+            ;
+
+affectation_char : T_TYPE_CHAR T_INDENTIFIER T_EQUAL T_VALUE_CHAR {PRINT_V(*$2,$4)}
+                 | T_INDENTIFIER T_EQUAL T_VALUE_CHAR {PRINT_V(*$1,$3)}
+                 ;
 
 %%
 

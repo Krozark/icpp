@@ -176,6 +176,7 @@ class Value
             FLOAT,
             DOUBLE,
             STRING,
+            //FUNCTION
             NIL,
             UNDEFINE
         } type;

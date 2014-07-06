@@ -8,7 +8,7 @@
     int icpp_line_no = 1;
 
     /* define yyterminate as this instead of NULL */
-    //#define yyterminate() return token::T_END;
+    #define yyterminate() return token::T_EXIT;
 
     /* msvc2010 requires that we exclude this header file. */
     #define YY_NO_UNISTD_H
@@ -28,124 +28,127 @@
     return token::T_EOL;
 }
 
+\/\/.*$ {
+}
+
 = {
-    return T_EQUAL;
+    return token::T_EQUAL;
 }
         /* separators */
 "," {
-    return T_COMA;
+    return token::T_COMA;
 }
 
 ":" {
-    return T_COLON;
+    return token::T_COLON;
 }
         /* brackets */
 "(" {
-    return T_BRACKET_OPEN;
+    return token::T_BRACKET_OPEN;
 }
 
 ")" {
-    return T_BRACKET_CLOSE;
+    return token::T_BRACKET_CLOSE;
 }
 
 "[" {
-    return T_SQUARE_BRACKET_OPEN;
+    return token::T_SQUARE_BRACKET_OPEN;
 }
 
 "]" {
-    return T_SQUARE_BRACKET_CLOSE;
+    return token::T_SQUARE_BRACKET_CLOSE;
 }
 
 "{" {
-    return T_CURLY_BRACKET_OPEN;
+    return token::T_CURLY_BRACKET_OPEN;
 }
 
 "}" {
-    return T_CURLY_BRACKET_CLOSE;
+    return token::T_CURLY_BRACKET_CLOSE;
 }
 
         /* pointer */
 "*" {
-    return T_ASTERISK;
+    return token::T_ASTERISK;
 }
 
 "&" {
-    return T_AMPERSAND;
+    return token::T_AMPERSAND;
 }
 
     /** KEYWORDS **/
 
 exit {
-    return T_EXIT;
+    return token::T_EXIT;
 }
 
         /* import */
 
 from {
-    return T_IMPORT_FROM;
+    return token::T_IMPORT_FROM;
 }
 
 import {
-    return T_IMPORT_IMPORT;
+    return token::T_IMPORT_IMPORT;
 }
 
         /* operators */
 as {
-    return T_OPERATOR_AS;
+    return token::T_OPERATOR_AS;
 }
 
 with {
-    return T_OPERATOR_WITH;
+    return token::T_OPERATOR_WITH;
 }
         /* builtins */
 
 help {
-    return T_B_HELP;
+    return token::T_B_HELP;
 }
 
 print {
-    return T_B_PRINT;
+    return token::T_B_PRINT;
 }
 
 show {
-    return T_B_SHOW;
+    return token::T_B_SHOW;
 }
 
 delete {
-    return T_B_DELETE;
+    return token::T_B_DELETE;
 }
 
 wget {
-    return T_B_WGET;
+    return token::T_B_WGET;
 }
 
 run {
-    return T_B_RUN;
+    return token::T_B_RUN;
 }
 
 compile {
-    return T_B_COMPILE;
+    return token::T_B_COMPILE;
 }
 
 source {
-    return T_B_SOURCE;
+    return token::T_B_SOURCE;
 }
 
         /* types */
 char  {
-    return T_TYPE_CHAR;
+    return token::T_TYPE_CHAR;
 }
 
 bool  {
-    return T_TYPE_BOOL;
+    return token::T_TYPE_BOOL;
 }
 
 int {
-    return T_TYPE_INT;
+    return token::T_TYPE_INT;
 }
 
 float {
-    return T_TYPE_FLOAT;
+    return token::T_TYPE_FLOAT;
 }
 
     /*double {
@@ -153,39 +156,39 @@ float {
     }*/
 
 string {
-    return T_TYPE_STRING;
+    return token::T_TYPE_STRING;
 }
 
 tuple {
-    return T_TYPE_TUPLE;
+    return token::T_TYPE_TUPLE;
 }
 
 tab {
-    return T_TYPE_TAB;
+    return token::T_TYPE_TAB;
 }
 
 dict {
-    return T_TYPE_DICT;
+    return token::T_TYPE_DICT;
 }
 
 auto {
-    return T_TYPE_AUTO;
+    return token::T_TYPE_AUTO;
 }
     /************** VALUES *****************/
 
 \'.\' {
     yylval->v_char = yytext[1];
-    return T_VALUE_CHAR;
+    return token::T_VALUE_CHAR;
 }
 
 true {
     yylval->v_bool = true;
-    return token::T_VALUE_BOOL;
+    //return token::T_VALUE_BOOL;
 }
 
 false {
     yylval->v_bool = false;
-    return token::T_VALUE_BOOL;
+    //return token::T_VALUE_BOOL;
 }
 
 [-+]?[0-9]+  {
@@ -204,11 +207,14 @@ false {
 }
 
 null {
-    return token::T_NULL;
+    return token::T_VALUE_NULL;
 }
 
-    /**************** KEYWORDS ****************/
-    
+    /**************** identifier ****************/
+[a-zA-Z_][a-zA-Z0-9_]* {
+    yylval->v_string = new std::string(yytext);
+    return token::T_INDENTIFIER;
+}
 
     /************** NOT CATCHED ****************/
 
