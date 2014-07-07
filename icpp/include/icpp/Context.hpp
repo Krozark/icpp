@@ -17,7 +17,10 @@ namespace icpp
 
             Value* get(const std::string& identifier);
 
+
         private:
+            friend class Driver;
+
             std::unordered_map<std::string,Value> values;
             Context* parent;
     };

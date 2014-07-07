@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <icpp/parser/Scanner.hpp>
+#include <icpp/Context.hpp>
 
 namespace icpp
 {
@@ -37,14 +38,24 @@ namespace icpp
              */
             bool isValid()const;
 
+        protected:
+            friend class Parser;
+
+            Context& context();
+            void push_context();
+            bool pop_context();
+            
+            
              
         private:
-            friend class Parser;
                 
             Scanner scanner; ///< The lexer
             Parser parser; ///< The parser
 
             bool validity;//< is valid
+
+            Context* context_current;
+
 
     };
 }
