@@ -17,6 +17,12 @@ namespace icpp
 
             Value* get(const std::string& identifier);
 
+            template<typename T>
+            bool create_value(const std::string& name,const T& val);
+
+            template<typename T>
+            bool change_value(const std::string& name,const T& val);
+            
 
         private:
             friend class Driver;
@@ -25,4 +31,5 @@ namespace icpp
             Context* parent;
     };
 }
+#include <icpp/Value.tpl>
 #endif
