@@ -1,6 +1,12 @@
 //types
 char c = 'c'
 c2 = 'c'
+
+print c
+show c
+
+print c2
+show c2
 //bool b = true //false
 //int i = 42
 //float f = 43.2

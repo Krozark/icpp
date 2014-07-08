@@ -36,13 +36,7 @@
 
     #define DEL(x) delete x; x=nullptr;
 
-    #ifdef DEBUG
-    #define PRINT(x) std::cout<<x<<std::endl;
-    #define PRINT_V(key,val) std::cout<<key<<"="<<val<<std::endl;
-    #else
-    #define PRINT(X) ;
-    #define PRINT_V(key,val) ;
-    #endif
+    #define OUT std::cout
 }
 
 
@@ -131,15 +125,19 @@
 
 %%
 
-start:  statements end {};
+start:  statements T_EXIT {
+        YYACCEPT;
+     }
+     ;
 
-end : T_EXIT {PRINT("EXIT")}
 
 statements : statement {}
            | statements statement {};
 
 statement : T_EOL 
           | affectation T_EOL
+          | print T_EOL
+          | show T_EOL
           ;
 
 affectation : affectation_char
@@ -150,9 +148,29 @@ affectation : affectation_char
             | affectation_auto*/
             ;
 
-affectation_char : T_TYPE_CHAR T_INDENTIFIER T_EQUAL T_VALUE_CHAR {PRINT_V(*$2,$4)}
-                 | T_INDENTIFIER T_EQUAL T_VALUE_CHAR {PRINT_V(*$1,$3)}
+affectation_char : T_TYPE_CHAR T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
+                     driver.context().create_value(*$2,$4);
+                    DEL($2);
+                 }
+                 | T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
+                    driver.context().change_value(*$1,$3);
+                    DEL($1);
+                 }
                  ;
+
+print : T_B_PRINT T_INDENTIFIER{
+        driver.context().print(*$2,OUT);
+        DEL($2);
+      } 
+      | T_B_PRINT {driver.context().print(OUT);} /* context */
+      ;
+
+show : T_B_SHOW T_INDENTIFIER {
+        driver.context().show(*$2,OUT);
+        DEL($2);
+     }
+     | T_B_SHOW {driver.context().show(OUT);} /* context */
+     ;
 
 %%
 

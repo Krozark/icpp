@@ -218,6 +218,10 @@ null {
 
     /************** NOT CATCHED ****************/
 
+[[:blank:]] {
+}
+
+
 . {
     utils::log::error("Icpp Parser","line",icpp_line_no,": what is that <",yytext,"> ?");
 }

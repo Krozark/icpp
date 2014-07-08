@@ -108,20 +108,20 @@ namespace icpp
             delete v_string;
     }
 
-    std::ostream& operator<<(std::ostream& out,const Value& self)
+    std::ostream& Value::print(std::ostream& out)const
     {
-        switch(self.type)
+        switch(type)
         {
             case Value::BOOL:
-                out<<(self.v_bool?"true":"false");break;
+                out<<(v_bool?"true":"false");break;
             case Value::CHAR:
-                out<<self.v_char;break;
+                out<<v_char;break;
             case Value::INT:
-                out<<self.v_int;break;
+                out<<v_int;break;
             case Value::FLOAT:
-                out<<self.v_float;break;
+                out<<v_float;break;
             case Value::STRING:
-                out<<*self.v_string;break;
+                out<<*v_string;break;
             case Value::NIL:
                 out<<"null";break;
             default:

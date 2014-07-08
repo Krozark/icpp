@@ -28,7 +28,7 @@ namespace icpp
 
             ~Value();
 
-            friend std::ostream& operator<<(std::ostream& out,const Value& self);
+            std::ostream& print(std::ostream& out)const;
             std::ostream& show(std::ostream& out)const;
 
             std::string type_str()const;

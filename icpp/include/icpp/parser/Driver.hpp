@@ -44,8 +44,6 @@ namespace icpp
             Context& context();
             void push_context();
             bool pop_context();
-            
-            
              
         private:
                 
