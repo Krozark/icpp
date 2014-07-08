@@ -30,6 +30,31 @@ namespace icpp
         return type == Type::NIL;
     }
 
+    inline bool Value::as_bool()const
+    {
+        return v_bool;
+    }
+
+    inline char Value::as_char()const
+    {
+        return v_char;
+    }
+
+    inline int Value::as_int()const
+    {
+        return v_int;
+    }
+
+    inline double Value::as_float()const
+    {
+        return v_float;
+    }
+
+    inline const std::string& Value::as_string()const
+    {
+        return *v_string;
+    }
+
     inline Value::Type Value::get_type()const
     {
         return type;

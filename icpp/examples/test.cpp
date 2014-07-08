@@ -166,7 +166,7 @@ int main(int argc,char* argv[])
     for(const Value& v : vec)
         v.show(std::cout)<<std::endl;
 
-    /*utils::sys::Compiler comp = utils::sys::Compiler::getCompiler();
+    /*
     utils::sys::Library libf = comp.input("f2.cpp")
         .output("f2")
         .flags("-o3","-Wall","-I../include","-std=c++0x")

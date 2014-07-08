@@ -18,6 +18,8 @@
 
     #include <utility>
     #include <list>
+    #include <utils/sys.hpp>
+
     #include <icpp/Value.hpp>
 
     extern int icpp_line_no; 
@@ -79,6 +81,8 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
     utils::json::Array* v_array;
     utils::json::Value* v_value;
     */
+
+    utils::sys::Compiler*   v_compiler;
 } 
 
     
@@ -150,7 +154,12 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %type<v_value>          value_tmp
 %type<v_value>          declaration
 %type<v_value>          declaration_and_affectation
+
 %type<v_list_value>     value_list
+
+%type<v_compiler>       compile_cmd
+%type<v_compiler>       compile_cmd_options
+%type<v_compiler>       compile_cmd_or_options
 
 /*%destructor {delete $$;} <v_string> <v_value> <v_list_value>*/
 
@@ -368,11 +377,112 @@ run : T_B_RUN T_INDENTIFIER {
     }
     ;
 
-compile : T_B_COMPILE T_VALUE_STRING {
-            utils::log::todo("compile","fonctionalaty not implemented");
+compile : compile_cmd_or_options T_OPERATOR_AS T_INDENTIFIER {
+            Value* v = driver.context().find(*$3);
+            if(v != nullptr)
+            {
+                utils::log::warning("Import","Name",*$3,"already exist in current context");
+                DEL($3);
+                DEL($1);
+                YYERROR;
+            }
+            $1->output(*$3);
+
+            try{
+                utils::sys::Library* lib= new utils::sys::Library($1->get());
+            } catch (std::runtime_error& e) {
+                utils::log::error("compile",e.what());
+                DEL($3);
+                DEL($1);
+                YYERROR;
+            }
+            DEL($3);
+            DEL($1);
         }
-        | T_B_COMPILE T_INDENTIFIER {
-            utils::log::todo("compile","fonctionalaty not implemented");
+        ;
+
+compile_cmd_or_options : compile_cmd {
+                            $$ = $1;
+                            $1 = nullptr;
+                       }
+                       | compile_cmd_options {
+                            $$ = $1;
+                            $1 = nullptr;
+                       }
+                       ;
+
+
+compile_cmd_options : compile_cmd T_OPERATOR_WITH {
+                        $$ = $1;
+                        $1 = nullptr;
+                    }
+                    | compile_cmd_options T_INDENTIFIER T_BRACKET_OPEN value_list T_BRACKET_CLOSE {
+                        $$ = $1;
+                        $1 = nullptr;
+                        if(*$2 == "flags")
+                        {
+                            for(const icpp::Value& v : *$4)
+                            {
+                                if(v.is_string())
+                                    $$->flags(v.as_string());
+                                else
+                                {
+                                    utils::log::warning("compile","In flags, Value",v,"is not of type string");
+                                    DEL($2);
+                                    DEL($4);
+                                    YYERROR;
+                                }
+                            }
+                        }
+                        else if(*$2 == "link")
+                        {
+                            for(const icpp::Value& v : *$4)
+                            {
+                                if(v.is_string())
+                                    $$->link(v.as_string());
+                                else
+                                {
+                                    utils::log::warning("compile","In link, Value",v,"is not of type string");
+                                    DEL($2);
+                                    DEL($4);
+                                    YYERROR;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            DEL($2);
+                            DEL($4);
+                            utils::log::warning("compile","Unknow param",*$2);
+                            YYERROR;
+                        }
+                        DEL($2);
+                        DEL($4);
+                    }
+                    ;
+
+compile_cmd : T_B_COMPILE value_list {
+            try {
+                utils::sys::Compiler* comp = new utils::sys::Compiler();
+                $$ = comp;
+                for(const icpp::Value& v : *$2)
+                {
+                    if(v.is_string())
+                        $$->input(v.as_string());
+                    else
+                    {
+                        utils::log::warning("compile","Value",v,"is not of type string");
+                        DEL($2);
+                        YYERROR;
+                    }
+                }
+            } catch (std::runtime_error& e){
+                utils::log::error("compile",e.what());
+                $$ = nullptr;
+                DEL($2);
+                YYERROR;
+            }
+            DEL($2);
         }
         ;
 

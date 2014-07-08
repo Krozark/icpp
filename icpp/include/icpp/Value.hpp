@@ -38,6 +38,8 @@ namespace icpp
             std::ostream& print(std::ostream& out)const;
             std::ostream& show(std::ostream& out)const;
 
+            friend std::ostream& operator<<(std::ostream& out,const Value& self);
+
 
             inline bool is_bool()const;
             inline bool is_char()const;
@@ -45,6 +47,12 @@ namespace icpp
             inline bool is_float()const;
             inline bool is_string()const;
             inline bool is_null()const;
+
+            inline bool as_bool()const;
+            inline char as_char()const;
+            inline int as_int()const;
+            inline double as_float()const;
+            inline const std::string& as_string()const;
 
             enum class Type {
                 BOOL,

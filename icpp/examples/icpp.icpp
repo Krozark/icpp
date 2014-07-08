@@ -61,16 +61,17 @@ print "******* COMPILATION ***********"
 print "*******************************"
 
 ////compilation
+compile "f.cpp" as libf
+
 string file = "f.cpp"
-//compile "f.cpp" as libf
 //compile file as libf
 //from libf import int print
 //
 //compile "f.cpp", "f.cpp" as libf2
 //
-//compile "f.cpp", "f.cpp" with flags("o3","Wall") as libf3
+//compile "f.cpp" with flags("o3","Wall") as libf3
 //
-//compile "f.cpp", "f.cpp" with flags("o3","Wall") link(p) as libf4
+//compile "f.cpp", "f.cpp" with flags("o3","Wall") link("libtest") as libf4
 //
 //compile "127.0.0.1:8000/test.cpp" as libf5
 

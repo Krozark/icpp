@@ -350,6 +350,12 @@ namespace icpp
         return out;
     }
 
+    std::ostream& operator<<(std::ostream& out,const Value& self)
+    {
+        self.print(out);
+        return out;
+    }
+
     std::string Value::type_str()const
     {
         switch(type)
