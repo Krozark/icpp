@@ -390,8 +390,10 @@ compile : compile_cmd_or_options T_OPERATOR_AS T_INDENTIFIER {
 
             try{
                 utils::sys::Library* lib = new utils::sys::Library($1->get());
-                bool p = driver.context().create_value(lib);
-                if(not p)
+                bool er = not lib->load();
+                if(not er)
+                    er = not driver.context().create_value(*$3,lib);
+                if(er)
                 {
                     DEL($3);
                     DEL($1);

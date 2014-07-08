@@ -30,6 +30,16 @@ namespace icpp
         return type == Type::NIL;
     }
 
+    inline bool Value::is_lib()const
+    {
+        return type == Type::LIBRARY;
+    }
+
+
+
+
+
+
     inline bool Value::as_bool()const
     {
         return v_bool;
@@ -54,6 +64,14 @@ namespace icpp
     {
         return *v_string;
     }
+
+    inline const utils::sys::Library& Value::as_library()const
+    {
+        return *v_library.get();
+    }
+
+
+
 
     inline Value::Type Value::get_type()const
     {

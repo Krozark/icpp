@@ -34,6 +34,7 @@ namespace icpp
             Value& operator=(double d);
             Value& operator=(const std::string& s);
             Value& operator=(std::string&& s);
+            Value& operator=(utils::sys::Library* lib);
 
             ~Value();
 
@@ -52,12 +53,14 @@ namespace icpp
             inline bool is_float()const;
             inline bool is_string()const;
             inline bool is_null()const;
+            inline bool is_lib()const;
 
             inline bool as_bool()const;
             inline char as_char()const;
             inline int as_int()const;
             inline double as_float()const;
             inline const std::string& as_string()const;
+            inline const utils::sys::Library& as_library()const;
 
             enum class Type {
                 BOOL,

@@ -48,6 +48,9 @@ namespace icpp
                 v_float=other.v_float;break;
             case Type::STRING:
                 v_string = new std::string(*other.v_string);break;
+            case Type::LIBRARY:
+                new(&v_library) std::shared_ptr<utils::sys::Library>;
+                v_library = other.v_library;break;
             default:break;
         }
     }
@@ -68,6 +71,9 @@ namespace icpp
                 v_float=other.v_float;break;
             case Type::STRING:
                 v_string = new std::string(*other.v_string);break;
+            case Type::LIBRARY:
+                new(&v_library) std::shared_ptr<utils::sys::Library>;
+                v_library = other.v_library;break;
             default:break;
         }
         return *this;
@@ -87,6 +93,10 @@ namespace icpp
                 v_float=other.v_float;break;
             case Type::STRING:
                 v_string = other.v_string;
+                other.type=Type::UNDEFINE;break;
+            case Type::LIBRARY:
+                new(&v_library) std::shared_ptr<utils::sys::Library>;
+                v_library = std::move(other.v_library);
                 other.type=Type::UNDEFINE;break;
             default:break;
         }
@@ -108,6 +118,10 @@ namespace icpp
                 v_float=other.v_float;break;
             case Type::STRING:
                 v_string = other.v_string;
+                other.type=Type::UNDEFINE;break;
+            case Type::LIBRARY:
+                new(&v_library) std::shared_ptr<utils::sys::Library>;
+                v_library = std::move(other.v_library);
                 other.type=Type::UNDEFINE;break;
             default:break;
         }
@@ -184,10 +198,25 @@ namespace icpp
         return *this;
     }
 
+    Value& Value::operator=(utils::sys::Library* lib)
+    {
+        if(type != Type::LIBRARY)
+        {
+            this->~Value();
+            type = Type::LIBRARY;
+            new(&v_library) std::shared_ptr<utils::sys::Library>;
+        }
+        else
+            v_library.reset(lib);
+        return *this;
+    }
+
     Value::~Value()
     {
         if(type==Type::STRING)
             delete v_string;
+        else if(type == Type::LIBRARY)
+            v_library.~shared_ptr();
     }
 
     bool Value::convert_to(const Value& other)
@@ -325,6 +354,8 @@ namespace icpp
                 out<<v_float;break;
             case Type::STRING:
                 out<<*v_string;break;
+            case Type::LIBRARY:
+                out<<v_library->name();break;
             case Type::NIL:
                 out<<"null";break;
             default:
@@ -348,6 +379,8 @@ namespace icpp
                 out<<"float, value: "<<v_float;break;
             case Type::STRING:
                 out<<"string, value: \""<<*v_string<<"\"";break;
+            case Type::LIBRARY:
+                out<<"library, value: "<<v_library->name();break;
             case Type::NIL:
                 out<<"null";break;
             default:
@@ -376,6 +409,8 @@ namespace icpp
                 return "float";
             case Type::STRING:
                 return "string";
+            case Type::LIBRARY:
+                return "library";
             case Type::NIL:
                 return "null";
             default:
