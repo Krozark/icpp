@@ -24,18 +24,17 @@ namespace icpp
             template<typename T>
             bool create_value(const std::string& name,const T& val);
 
-            bool change_value(const std::string& name,bool val);
-            bool change_value(const std::string& name,char val);
-            bool change_value(const std::string& name,int val);
-            bool change_value(const std::string& name,double val);
-            bool change_value(const std::string& name,std::string val);
-            bool change_value(const std::string& name,Value&& tmp);
+            template<typename T>
+            bool change_value(const std::string& name,const T& val);
+
+            template<typename T>
+            bool change_value(const std::string& name,T&& val);
 
             /**
              * \return true if created, false else but do not failed
              */
-            template<typename T>
-            bool create_or_change_value(const std::string& name,const T& val);
+            /*template<typename T>
+            bool create_or_change_value(const std::string& name,const T& val);*/
 
 
             bool print(const std::string& identifier,std::ostream& out)const;

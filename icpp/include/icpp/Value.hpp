@@ -32,6 +32,9 @@ namespace icpp
 
             ~Value();
 
+            bool convert_to(const Value& value);
+            bool convert_to(Value&& value);
+
             std::ostream& print(std::ostream& out)const;
             std::ostream& show(std::ostream& out)const;
 

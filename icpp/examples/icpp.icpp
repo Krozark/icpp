@@ -17,10 +17,10 @@ c3 = c2
 print c3
 show c3
 
-//bool b = true //false
-//int i = 42
-//float f = 43.2
-//string s = "string_test"
+bool b = true //false
+int i = 42
+float f = 43.2
+string s = "string_test"
 //auto n = null
 //auto test = 68
 //

@@ -210,7 +210,7 @@ declaration : T_TYPE_CHAR T_INDENTIFIER {
                 DEL($2);
             }
             | T_TYPE_STRING T_INDENTIFIER {
-                bool p = driver.context().create_value(*$2,"");
+                bool p = driver.context().create_value(*$2,std::string(""));
                 if(not p)
                 {
                     DEL($2);
@@ -222,7 +222,7 @@ declaration : T_TYPE_CHAR T_INDENTIFIER {
             ;
 
 declaration_and_affectation : declaration T_EQUAL value_tmp {
-                                *$1 = *$3;
+                                $1->convert_to(*$3);
                                 DEL($3);
                             }
                             | declaration T_EQUAL T_INDENTIFIER {
@@ -230,7 +230,7 @@ declaration_and_affectation : declaration T_EQUAL value_tmp {
                                 DEL($3);
                                 if(v)
                                 {
-                                    *$1 = *v;
+                                    $1->convert_to(*v);
                                 }
                             }
                             ;
@@ -243,13 +243,6 @@ affectation : T_INDENTIFIER T_EQUAL value_tmp {
                     YYERROR;
             }
             | T_INDENTIFIER T_EQUAL T_INDENTIFIER {
-                icpp::Value* v1 = driver.context().get(*$1);
-                if(v1 == nullptr)
-                {
-                    DEL($1);
-                    DEL($3);
-                    YYERROR;
-                }
                 icpp::Value* v2 = driver.context().get(*$3);
                 if(v2 == nullptr)
                 {
@@ -257,7 +250,11 @@ affectation : T_INDENTIFIER T_EQUAL value_tmp {
                     DEL($3);
                     YYERROR;
                 }
-                *v1 = *v2;
+                bool p = driver.context().change_value(*$1,*v2);
+                DEL($1);
+                DEL($3);
+                if(not p)
+                    YYERROR;
             }
             ;
 

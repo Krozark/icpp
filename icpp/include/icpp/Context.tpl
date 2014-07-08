@@ -17,7 +17,28 @@ namespace icpp
         }
         return res;
     }
+    
+    template<typename T>
+    bool Context::change_value(const std::string& name,const T& val)
+    {
+        Value* v = get(name);
+        bool res = false;
+        if(v)
+            res = v->convert_to(val);
+        return res;
+    }
 
+    template<typename T>
+    bool Context::change_value(const std::string& name,T&& val)
+    {
+        Value* v = get(name);
+        bool res = false;
+        if(v)
+            res = v->convert_to(std::move(val));
+        return res;
+    }
+
+    /*
     template<typename T>
     bool Context::create_or_change_value(const std::string& name,const T& val)
     {
@@ -33,5 +54,5 @@ namespace icpp
             f->second = val;
         }
         return res;
-    }
+    }*/
 }
