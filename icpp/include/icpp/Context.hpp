@@ -19,6 +19,8 @@ namespace icpp
             Value* get(const std::string& identifier);
             const Value* get(const std::string& identifier)const;
 
+            bool remove(const std::string& identifier);
+
             template<typename T>
             bool create_value(const std::string& name,const T& val);
 

@@ -136,14 +136,17 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 
 %start start
 /** Define types for union values */
+    /* tokens */
 %type<v_char>   T_VALUE_CHAR
 %type<v_bool>   T_VALUE_BOOL
 %type<v_int>    T_VALUE_INT
 %type<v_float>  T_VALUE_FLOAT
 %type<v_string> T_VALUE_STRING
 %type<v_string> T_INDENTIFIER
-
+    /* rules */
 %type<v_value>  value_tmp;
+%type<v_value>  declaration
+%type<v_value>  declaration_and_affectation
 
 
 %%
@@ -161,60 +164,102 @@ statements : statement {}
 
 statement : T_EOL 
           | declaration T_EOL
+          | declaration_and_affectation T_EOL
           | affectation T_EOL
-          | print T_EOL
-          | show T_EOL
+          | bultins T_EOL
           ;
 
 declaration : T_TYPE_CHAR T_INDENTIFIER {
                 bool p = driver.context().create_value(*$2,'0');
-                DEL($2);
                 if(not p)
+                {
+                    DEL($2);
                     YYERROR;
+                }
+                $$=driver.context().get(*$2);
+                DEL($2);
             }
             | T_TYPE_BOOL T_INDENTIFIER {
                 bool p = driver.context().create_value(*$2,false);
-                DEL($2);
                 if(not p)
+                {
+                    DEL($2);
                     YYERROR;
+                }
+                $$=driver.context().get(*$2);
+                DEL($2);
             }
             | T_TYPE_INT T_INDENTIFIER {
                 bool p = driver.context().create_value(*$2,0);
-                DEL($2);
                 if(not p)
+                {
+                    DEL($2);
                     YYERROR;
+                }
+                $$=driver.context().get(*$2);
+                DEL($2);
             }
             | T_TYPE_FLOAT T_INDENTIFIER {
                 bool p = driver.context().create_value(*$2,0.f);
-                DEL($2);
                 if(not p)
+                {
+                    DEL($2);
                     YYERROR;
+                }
+                $$=driver.context().get(*$2);
+                DEL($2);
             }
             | T_TYPE_STRING T_INDENTIFIER {
                 bool p = driver.context().create_value(*$2,"");
-                DEL($2);
                 if(not p)
+                {
+                    DEL($2);
                     YYERROR;
+                }
+                $$=driver.context().get(*$2);
+                DEL($2);
             }
             ;
 
-affectation : affectation_primitif
-            /*affectation_char
-            | affectation_bool
-            | affectation_int
-            | affectation_float
-            | affectation_string
-            | affectation_auto*/
-            ;
+declaration_and_affectation : declaration T_EQUAL value_tmp {
+                                *$1 = *$3;
+                                DEL($3);
+                            }
+                            | declaration T_EQUAL T_INDENTIFIER {
+                                icpp::Value* v = driver.context().get(*$3);
+                                DEL($3);
+                                if(v)
+                                {
+                                    *$1 = *v;
+                                }
+                            }
+                            ;
 
-affectation_primitif : T_INDENTIFIER T_EQUAL value_tmp {
-                        bool p = driver.context().change_value(*$1,std::move(*$3));
-                        DEL($1);
-                        DEL($3);
-                        if(not p)
-                            YYERROR;
-                    }
-                    ;
+affectation : T_INDENTIFIER T_EQUAL value_tmp {
+                bool p = driver.context().change_value(*$1,std::move(*$3));
+                DEL($1);
+                DEL($3);
+                if(not p)
+                    YYERROR;
+            }
+            | T_INDENTIFIER T_EQUAL T_INDENTIFIER {
+                icpp::Value* v1 = driver.context().get(*$1);
+                if(v1 == nullptr)
+                {
+                    DEL($1);
+                    DEL($3);
+                    YYERROR;
+                }
+                icpp::Value* v2 = driver.context().get(*$3);
+                if(v2 == nullptr)
+                {
+                    DEL($1);
+                    DEL($3);
+                    YYERROR;
+                }
+                *v1 = *v2;
+            }
+            ;
 
 value_tmp : T_VALUE_CHAR {$$=new icpp::Value($1);}
           | T_VALUE_BOOL {$$=new icpp::Value($1);}
@@ -222,7 +267,23 @@ value_tmp : T_VALUE_CHAR {$$=new icpp::Value($1);}
           | T_VALUE_FLOAT {$$=new icpp::Value($1);}
           | T_VALUE_STRING {$$=new icpp::Value(std::move(*$1));DEL($1);}
           | T_VALUE_NULL  {$$=new icpp::Value();}
+          ;
 
+
+bultins : help
+        | print
+        | show
+        | delete
+        | wget
+        | run
+        | compile
+        | source
+        ;
+
+help : T_B_HELP {
+        utils::log::todo("help","fonctionalaty not implemented");
+     }
+     ;
 
 print : T_B_PRINT T_INDENTIFIER{
         bool p = driver.context().print(*$2,OUT);
@@ -244,7 +305,40 @@ show : T_B_SHOW T_INDENTIFIER {
      | T_B_SHOW {driver.context().show(OUT);} /* context */
      ;
 
+delete : T_B_DELETE T_INDENTIFIER {
+            bool p = driver.context().remove(*$2);
+            DEL($2);
+            if(not p)
+                YYERROR;
+       }
+       ;
 
+wget : T_B_WGET T_VALUE_STRING {
+        utils::log::todo("wget","fonctionalaty not implemented");
+     }
+     ;
+
+run : T_B_RUN T_INDENTIFIER {
+        utils::log::todo("run","fonctionalaty not implemented");
+    }
+    | T_B_RUN T_INDENTIFIER T_OPERATOR_AS T_INDENTIFIER {
+        utils::log::todo("run","fonctionalaty not implemented");
+    }
+    ;
+
+compile : T_B_COMPILE T_VALUE_STRING {
+            utils::log::todo("compile","fonctionalaty not implemented");
+        }
+        | T_B_COMPILE T_INDENTIFIER {
+            utils::log::todo("compile","fonctionalaty not implemented");
+        }
+        ;
+
+source : T_B_SOURCE T_VALUE_STRING {
+       }
+       | T_B_SOURCE T_INDENTIFIER {
+       }
+       ;
 
 %%
 

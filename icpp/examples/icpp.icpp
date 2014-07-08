@@ -1,7 +1,21 @@
+help
 //types
+print "******* create c **********"
 char c
 c = 'c'
-//c2 = 'c'
+print c
+show c
+
+print "******* create c2 **********"
+char c2 = 'd'
+print c2
+show c2
+
+print "******* create c3 **********"
+char c3 = c
+c3 = c2
+print c3
+show c3
 
 //bool b = true //false
 //int i = 42
@@ -24,18 +38,10 @@ c = 'c'
 //print p //function
 //show p //type : function, return: int, param: (int)
 //
-print "******* test print/show context **********"
-show "******* test print/show context **********"
+print "******* test print context **********"
 print
+print "******* test show context **********"
 show
-
-print "******* test print/show c **********"
-print c
-show c
-
-print "******* test print/show c2 **********"
-print c2
-show c2
 //from "f.cpp" import int print(int*)
 //from "f.cpp" import int print(const string&)
 //from "f.cpp" import int print(int**)
@@ -70,7 +76,9 @@ show c2
 //
 //
 ////compilation
+//string file = "f.cpp"
 //compile "f.cpp" as libf
+//compile file as libf
 //from libf import int print
 //
 //compile "f.cpp", "f.cpp" as libf2
@@ -84,7 +92,8 @@ show c2
 ////extern source
 //wget "127.0.0.1:8000/test.cpp" as wget_file
 //source "file.icpp"
+//string source_file = "file.icpp"
+//source source_file
 //
-//help
 //
 exit

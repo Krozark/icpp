@@ -21,6 +21,8 @@ namespace icpp
             else
                 res = &(f->second);
         }
+        if(not res)
+            utils::log::warning("Icpp","Name",identifier,"is not define");
 
         return res;
     }
@@ -39,19 +41,45 @@ namespace icpp
             else
                 res = &(f->second);
         }
+        if(not res)
+            utils::log::warning("Icpp","Name",identifier,"is not define");
 
         return res;
+    }
+
+    bool Context::remove(const std::string& identifier)
+    {
+        bool res = false;
+        Context* self = this;
+
+        while(self != nullptr)
+        {
+            auto f = self->values.find(identifier);
+
+            if(f == self->values.end())
+                self = self->parent;
+            else
+            {
+                self->values.erase(f);
+                res = true;
+                break;
+            }
+        }
+        if(not res)
+            utils::log::warning("Icpp","Name",identifier,"is not define");
+        
+        return res;
+
     }
 
     bool Context::print(const std::string& identifier,std::ostream& out)const
     {
         const Value* v = get(identifier);
-        if(v != nullptr){
+        if(v != nullptr)
+        {
             v->print(out)<<std::endl;
             return true;
         }
-        else
-            utils::log::warning("Icpp","Name",identifier,"is not define");
         return false;
     }
 
@@ -63,8 +91,6 @@ namespace icpp
             v->show(out)<<std::endl;
             return true;
         }
-        else
-            utils::log::warning("Icpp","Name",identifier,"is not define");
         return false;
     }
 
