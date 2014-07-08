@@ -99,27 +99,105 @@ namespace icpp
 
     bool Context::change_value(const std::string& name,bool val)
     {
-        return false;
+        Value* v = get(name);
+        bool res = false;
+        if(v)
+        {
+            if(v->is_bool())
+            {
+                *v = val;
+                res = true;
+            }
+            else
+                utils::log::warning("Icpp",name,"is not of type bool");
+        }
+        return res;
     }
 
     bool Context::change_value(const std::string& name,char val)
     {
-        return false;
+        Value* v = get(name);
+        bool res = false;
+        if(v)
+        {
+            if(v->is_char())
+            {
+                *v = val;
+                res = true;
+            }
+            else
+                utils::log::warning("Icpp",name,"is not of type char");
+        }
+        return res;
     }
 
     bool Context::change_value(const std::string& name,int val)
     {
-        return false;
+        Value* v = get(name);
+        bool res = false;
+        if(v)
+        {
+            if(v->is_int())
+            {
+                *v = val;
+                res = true;
+            }
+            else
+                utils::log::warning("Icpp",name,"is not of type int");
+        }
+        return res;
     }
 
-    bool Context::change_value(const std::string& name,float val)
+    bool Context::change_value(const std::string& name,double val)
     {
-        return false;
+        Value* v = get(name);
+        bool res = false;
+        if(v)
+        {
+            if(v->is_float())
+            {
+                *v = val;
+                res = true;
+            }
+            else
+                utils::log::warning("Icpp",name,"is not of type float");
+        }
+        return res;
     }
 
     bool Context::change_value(const std::string& name,std::string val)
     {
-        return false;
+        Value* v = get(name);
+        bool res = false;
+        if(v)
+        {
+            if(v->is_string())
+            {
+                *v = val;
+                res = true;
+            }
+            else
+                utils::log::warning("Icpp",name,"is not of type string");
+        }
+        return res;
+    }
+
+    bool Context::change_value(const std::string& name,Value&& val)
+    {
+
+        Value* v = get(name);
+        bool res = false;
+        if(v)
+        {
+            if(v->get_type() == val.get_type())
+            {
+                *v = std::move(val);
+                res = true;
+            }
+            else
+                utils::log::warning("Icpp",name,"is not of type",val.type_str());
+        }
+        return res;
     }
     
 }

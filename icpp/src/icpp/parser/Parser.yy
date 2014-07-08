@@ -17,6 +17,7 @@
 %code requires {
 
     #include <utility>
+    #include <icpp/Value.hpp>
 
     extern int icpp_line_no; 
 
@@ -46,15 +47,16 @@ dic : T_CURLY_BRACKET_OPEN T_CURLY_BRACKET_CLOSE
 
 tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
     ;
-t_value : T_VALUE_CHAR
-        | T_VALUE_BOOl
-        | T_VALUE_INT
-        | T_VALUE_FLOAT
-        | T_VALUE_STRING
-        | T_VALUE_NULL
-        // tuple, dic, tab
-        ;
  */
+
+/*affectation_char : T_TYPE_CHAR T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
+                    bool p = driver.context().create_value(*$2,$4);
+                    DEL($2);
+                    if(not p)
+                        YYERROR;
+                 }
+                 ;
+*/
 }
 
 
@@ -67,6 +69,7 @@ t_value : T_VALUE_CHAR
     int             v_int;
     double          v_float;
     std::string*    v_string;
+    icpp::Value*    v_value;
     // Pointers to more complex classes
     /*
     utils::json::Object* v_object;
@@ -121,7 +124,7 @@ t_value : T_VALUE_CHAR
 %token      T_TYPE_AUTO             "type auto"
     /* values*/
 %token      T_VALUE_CHAR            "value char"
-%token      T_VALUE_BOOl            "value bool"
+%token      T_VALUE_BOOL            "value bool"
 %token      T_VALUE_INT             "value int"
 %token      T_VALUE_FLOAT           "value float"
 %token      T_VALUE_STRING          "value string"
@@ -134,11 +137,13 @@ t_value : T_VALUE_CHAR
 %start start
 /** Define types for union values */
 %type<v_char>   T_VALUE_CHAR
-/*%type<v_bool>   T_VALUE_BOOL
+%type<v_bool>   T_VALUE_BOOL
 %type<v_int>    T_VALUE_INT
 %type<v_float>  T_VALUE_FLOAT
-%type<v_string> T_VALUE_STRING*/
+%type<v_string> T_VALUE_STRING
 %type<v_string> T_INDENTIFIER
+
+%type<v_value>  value_tmp;
 
 
 %%
@@ -155,33 +160,69 @@ statements : statement {}
            ;
 
 statement : T_EOL 
+          | declaration T_EOL
           | affectation T_EOL
           | print T_EOL
           | show T_EOL
           ;
 
-affectation : affectation_char
-            /*| affectation_bool
+declaration : T_TYPE_CHAR T_INDENTIFIER {
+                bool p = driver.context().create_value(*$2,'0');
+                DEL($2);
+                if(not p)
+                    YYERROR;
+            }
+            | T_TYPE_BOOL T_INDENTIFIER {
+                bool p = driver.context().create_value(*$2,false);
+                DEL($2);
+                if(not p)
+                    YYERROR;
+            }
+            | T_TYPE_INT T_INDENTIFIER {
+                bool p = driver.context().create_value(*$2,0);
+                DEL($2);
+                if(not p)
+                    YYERROR;
+            }
+            | T_TYPE_FLOAT T_INDENTIFIER {
+                bool p = driver.context().create_value(*$2,0.f);
+                DEL($2);
+                if(not p)
+                    YYERROR;
+            }
+            | T_TYPE_STRING T_INDENTIFIER {
+                bool p = driver.context().create_value(*$2,"");
+                DEL($2);
+                if(not p)
+                    YYERROR;
+            }
+            ;
+
+affectation : affectation_primitif
+            /*affectation_char
+            | affectation_bool
             | affectation_int
             | affectation_float
             | affectation_string
             | affectation_auto*/
             ;
 
-affectation_char : T_TYPE_CHAR T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
-                    bool p = driver.context().create_value(*$2,$4);
-                    DEL($2);
-                    if(not p)
-                        YYERROR;
-                 }
-                 /*| T_VALUE_CHAR T_INDENTIFIER T_EQUAL value*/
-                 | T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
-                    bool p = driver.context().change_value(*$1,$3);
-                    DEL($1);
-                    if(not p)
-                        YYERROR;
-                 }
-                 ;
+affectation_primitif : T_INDENTIFIER T_EQUAL value_tmp {
+                        bool p = driver.context().change_value(*$1,std::move(*$3));
+                        DEL($1);
+                        DEL($3);
+                        if(not p)
+                            YYERROR;
+                    }
+                    ;
+
+value_tmp : T_VALUE_CHAR {$$=new icpp::Value($1);}
+          | T_VALUE_BOOL {$$=new icpp::Value($1);}
+          | T_VALUE_INT  {$$=new icpp::Value($1);}
+          | T_VALUE_FLOAT {$$=new icpp::Value($1);}
+          | T_VALUE_STRING {$$=new icpp::Value(std::move(*$1));DEL($1);}
+          | T_VALUE_NULL  {$$=new icpp::Value();}
+
 
 print : T_B_PRINT T_INDENTIFIER{
         bool p = driver.context().print(*$2,OUT);
@@ -189,6 +230,7 @@ print : T_B_PRINT T_INDENTIFIER{
         if(not p)
             YYERROR;
       } 
+      | T_B_PRINT value_tmp {$2->print(OUT)<<std::endl;DEL($2);}
       | T_B_PRINT {driver.context().print(OUT);} /* context */
       ;
 
@@ -198,6 +240,7 @@ show : T_B_SHOW T_INDENTIFIER {
         if(not p)
             YYERROR;
      }
+     | T_B_SHOW value_tmp {$2->show(OUT)<<std::endl;DEL($2);}
      | T_B_SHOW {driver.context().show(OUT);} /* context */
      ;
 

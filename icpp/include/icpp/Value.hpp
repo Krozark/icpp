@@ -13,18 +13,22 @@ namespace icpp
             explicit Value(bool b);
             explicit Value(char c);
             explicit Value(int i);
-            explicit Value(float f);
             explicit Value(double d);
             explicit Value(const std::string& s);
             explicit Value(std::string&& s);
 
             Value(const Value& other);
-
             Value& operator=(const Value& other);
 
             Value(Value&& other);
-
             Value& operator=(Value&& other);
+
+            Value& operator=(bool b);
+            Value& operator=(char c);
+            Value& operator=(int i);
+            Value& operator=(double d);
+            Value& operator=(const std::string& s);
+            Value& operator=(std::string&& s);
 
             ~Value();
 

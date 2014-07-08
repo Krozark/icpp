@@ -104,6 +104,76 @@ namespace icpp
         return *this;
     }
 
+    Value& Value::operator=(bool b)
+    {
+        if(type != Type::BOOL)
+        {
+            this->~Value();
+            type = Type::BOOL;
+        }
+        v_bool = b;
+        return *this;
+    }
+
+    Value& Value::operator=(char c)
+    {
+        if(type != Type::CHAR)
+        {
+            this->~Value();
+            type = Type::CHAR;
+        }
+        v_char = c;
+        return *this;
+    }
+
+    Value& Value::operator=(int i)
+    {
+        if(type != Type::INT)
+        {
+            this->~Value();
+            type = Type::INT;
+        }
+        v_int = i;
+        return *this;
+    }
+
+    Value& Value::operator=(double d)
+    {
+        if(type != Type::FLOAT)
+        {
+            this->~Value();
+            type = Type::FLOAT;
+        }
+        v_float = d;
+        return *this;
+    }
+
+    Value& Value::operator=(const std::string& s)
+    {
+        if(type != Type::STRING)
+        {
+            this->~Value();
+            type = Type::STRING;
+            v_string = new std::string(s);
+        }
+        else
+            *v_string = s;
+        return *this;
+    }
+
+    Value& Value::operator=(std::string&& s)
+    {
+        if(type != Type::STRING)
+        {
+            this->~Value();
+            type = Type::STRING;
+            v_string = new std::string(std::move(s));
+        }
+        else
+            *v_string = std::move(s);
+        return *this;
+    }
+
     Value::~Value()
     {
         if(type==Type::STRING)

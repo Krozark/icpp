@@ -17,4 +17,21 @@ namespace icpp
         }
         return res;
     }
+
+    template<typename T>
+    bool Context::create_or_change_value(const std::string& name,const T& val)
+    {
+        bool res = false;
+        auto f = values.find(name);
+        if(f == values.end())
+        {
+            values.emplace(name,Value(val));
+            res = true;
+        }
+        else
+        {
+            f->second = val;
+        }
+        return res;
+    }
 }

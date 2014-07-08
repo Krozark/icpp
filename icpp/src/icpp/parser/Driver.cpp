@@ -11,6 +11,7 @@ namespace icpp
 
     Driver::~Driver()
     {
+        delete context_current;
     }
 
 

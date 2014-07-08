@@ -151,10 +151,6 @@ float {
     return token::T_TYPE_FLOAT;
 }
 
-    /*double {
-        return T_TYPE_DOUBLE;
-    }*/
-
 string {
     return token::T_TYPE_STRING;
 }
@@ -183,12 +179,12 @@ auto {
 
 true {
     yylval->v_bool = true;
-    //return token::T_VALUE_BOOL;
+    return token::T_VALUE_BOOL;
 }
 
 false {
     yylval->v_bool = false;
-    //return token::T_VALUE_BOOL;
+    return token::T_VALUE_BOOL;
 }
 
 [-+]?[0-9]+  {

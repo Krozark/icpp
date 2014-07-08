@@ -1,6 +1,7 @@
 //types
-char c = 'c'
-c2 = 'c'
+char c
+c = 'c'
+//c2 = 'c'
 
 //bool b = true //false
 //int i = 42
@@ -23,12 +24,16 @@ c2 = 'c'
 //print p //function
 //show p //type : function, return: int, param: (int)
 //
+print "******* test print/show context **********"
+show "******* test print/show context **********"
 print
 show
 
+print "******* test print/show c **********"
 print c
 show c
 
+print "******* test print/show c2 **********"
 print c2
 show c2
 //from "f.cpp" import int print(int*)
