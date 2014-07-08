@@ -62,16 +62,11 @@ print "*******************************"
 
 ////compilation
 compile "f.cpp" as libf
+//delete libf
 
 string file = "f.cpp"
-//compile file as libf
-//from libf import int print
-//
-//compile "f.cpp", "f.cpp" as libf2
-//
-//compile "f.cpp" with flags("o3","Wall") as libf3
-//
-//compile "f.cpp", "f.cpp" with flags("o3","Wall") link("libtest") as libf4
+
+compile file, "f2.cpp" with flags("-o3","-Wall") link("utils") as libf2
 //
 //compile "127.0.0.1:8000/test.cpp" as libf5
 
