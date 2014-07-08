@@ -75,6 +75,8 @@ namespace icpp
             out<<u.first<<" : ";
             u.second.print(out)<<"\n";
         }
+        if(parent)
+            parent->print(out);
         out<<std::flush;
 
         return out;
@@ -88,6 +90,8 @@ namespace icpp
             u.second.show(out);
             out<<"\n";
         }
+        if(parent)
+            parent->show(out);
         out<<std::flush;
 
         return out;
