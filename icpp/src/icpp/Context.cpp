@@ -99,22 +99,27 @@ namespace icpp
 
     bool Context::change_value(const std::string& name,bool val)
     {
+        return false;
     }
 
     bool Context::change_value(const std::string& name,char val)
     {
+        return false;
     }
 
     bool Context::change_value(const std::string& name,int val)
     {
+        return false;
     }
 
     bool Context::change_value(const std::string& name,float val)
     {
+        return false;
     }
 
     bool Context::change_value(const std::string& name,std::string val)
     {
+        return false;
     }
     
 }

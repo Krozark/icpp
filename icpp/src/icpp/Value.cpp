@@ -3,40 +3,40 @@
 namespace icpp
 {
     
-    Value::Value(): type(NIL)
+    Value::Value(): type(Type::NIL)
     {};
 
-    Value::Value(bool b) : type(BOOL),v_bool(b)
+    Value::Value(bool b) : type(Type::BOOL),v_bool(b)
     {};
 
-    Value::Value(char c) : type(CHAR),v_char(c)
+    Value::Value(char c) : type(Type::CHAR),v_char(c)
     {};
 
-    Value::Value(int i) : type(INT),v_int(i)
+    Value::Value(int i) : type(Type::INT),v_int(i)
     {};
 
-    Value::Value(double d) : type(FLOAT), v_float(d)
+    Value::Value(double d) : type(Type::FLOAT), v_float(d)
     {};
 
-    Value::Value(const std::string& s) : type(STRING), v_string(new std::string(s))
+    Value::Value(const std::string& s) : type(Type::STRING), v_string(new std::string(s))
     {};
 
-    Value::Value(std::string&& s) : type(STRING), v_string(new std::string(std::move(s)))
+    Value::Value(std::string&& s) : type(Type::STRING), v_string(new std::string(std::move(s)))
     {};
 
     Value::Value(const Value& other) : type(other.type)
     {
         switch(type)
         {
-            case BOOL:
+            case Type::BOOL:
                 v_bool=other.v_bool;break;
-            case CHAR:
+            case Type::CHAR:
                 v_char=other.v_char;break;
-            case INT:
+            case Type::INT:
                 v_int=other.v_int;break;
-            case FLOAT:
+            case Type::FLOAT:
                 v_float=other.v_float;break;
-            case STRING:
+            case Type::STRING:
                 v_string = new std::string(*other.v_string);break;
             default:break;
         }
@@ -48,15 +48,15 @@ namespace icpp
         type = other.type;
         switch(type)
         {
-            case BOOL:
+            case Type::BOOL:
                 v_bool=other.v_bool;break;
-            case CHAR:
+            case Type::CHAR:
                 v_char=other.v_char;break;
-            case INT:
+            case Type::INT:
                 v_int=other.v_int;break;
-            case FLOAT:
+            case Type::FLOAT:
                 v_float=other.v_float;break;
-            case STRING:
+            case Type::STRING:
                 v_string = new std::string(*other.v_string);break;
             default:break;
         }
@@ -67,16 +67,17 @@ namespace icpp
     {
         switch(type)
         {
-            case BOOL:
+            case Type::BOOL:
                 v_bool=other.v_bool;break;
-            case CHAR:
+            case Type::CHAR:
                 v_char=other.v_char;break;
-            case INT:
+            case Type::INT:
                 v_int=other.v_int;break;
-            case FLOAT:
+            case Type::FLOAT:
                 v_float=other.v_float;break;
-            case STRING:
-                v_string = other.v_string;other.type=UNDEFINE;break;
+            case Type::STRING:
+                v_string = other.v_string;
+                other.type=Type::UNDEFINE;break;
             default:break;
         }
     }
@@ -87,16 +88,17 @@ namespace icpp
         type = other.type;
         switch(type)
         {
-            case BOOL:
+            case Type::BOOL:
                 v_bool=other.v_bool;break;
-            case CHAR:
+            case Type::CHAR:
                 v_char=other.v_char;break;
-            case INT:
+            case Type::INT:
                 v_int=other.v_int;break;
-            case FLOAT:
+            case Type::FLOAT:
                 v_float=other.v_float;break;
-            case STRING:
-                v_string = other.v_string;other.type=UNDEFINE;break;
+            case Type::STRING:
+                v_string = other.v_string;
+                other.type=Type::UNDEFINE;break;
             default:break;
         }
         return *this;
@@ -104,7 +106,7 @@ namespace icpp
 
     Value::~Value()
     {
-        if(type==STRING)
+        if(type==Type::STRING)
             delete v_string;
     }
 
@@ -112,17 +114,17 @@ namespace icpp
     {
         switch(type)
         {
-            case Value::BOOL:
+            case Type::BOOL:
                 out<<(v_bool?"true":"false");break;
-            case Value::CHAR:
+            case Type::CHAR:
                 out<<v_char;break;
-            case Value::INT:
+            case Type::INT:
                 out<<v_int;break;
-            case Value::FLOAT:
+            case Type::FLOAT:
                 out<<v_float;break;
-            case Value::STRING:
+            case Type::STRING:
                 out<<*v_string;break;
-            case Value::NIL:
+            case Type::NIL:
                 out<<"null";break;
             default:
                 out<<"???";break;
@@ -135,17 +137,17 @@ namespace icpp
         out<<"type: ";
         switch(type)
         {
-            case Value::BOOL:
+            case Type::BOOL:
                 out<<"bool, value: "<<(v_bool?"true":"false");break;
-            case Value::CHAR:
+            case Type::CHAR:
                 out<<"char, value: "<<v_char;break;
-            case Value::INT:
+            case Type::INT:
                 out<<"int, value: "<<v_int;break;
-            case Value::FLOAT:
+            case Type::FLOAT:
                 out<<"float, value: "<<v_float;break;
-            case Value::STRING:
+            case Type::STRING:
                 out<<"string, value: "<<*v_string;break;
-            case Value::NIL:
+            case Type::NIL:
                 out<<"null";break;
             default:
                 out<<"???";break;
@@ -157,22 +159,20 @@ namespace icpp
     {
         switch(type)
         {
-            case Value::BOOL:
+            case Type::BOOL:
                 return "bool";
-            case Value::CHAR:
+            case Type::CHAR:
                 return "char";
-            case Value::INT:
+            case Type::INT:
                 return "int";
-            case Value::FLOAT:
+            case Type::FLOAT:
                 return "float";
-            case Value::STRING:
+            case Type::STRING:
                 return "string";
-            case Value::NIL:
+            case Type::NIL:
                 return "null";
             default:
                 return "???";
         }
     }
-
-
 }
