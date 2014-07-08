@@ -16,10 +16,10 @@ namespace icpp
             Context(const Context&) = delete;
             Context& operator=(const Context&) = delete;
 
-            Value* get(const std::string& identifier);
-            const Value* get(const std::string& identifier)const;
+            Value* get(const std::string& identifier,bool show_error =true);
+            const Value* get(const std::string& identifier, bool show_error=true)const;
 
-            bool remove(const std::string& identifier);
+            bool remove(const std::string& identifier,bool show_error=true);
 
             template<typename T>
             bool create_value(const std::string& name,const T& val);
@@ -33,8 +33,11 @@ namespace icpp
             /**
              * \return true if created, false else but do not failed
              */
-            /*template<typename T>
-            bool create_or_change_value(const std::string& name,const T& val);*/
+            template<typename T>
+            bool create_or_change_value(const std::string& name,const T& val);
+
+            template<typename T>
+            bool create_or_change_value(const std::string& name,T&& val);
 
 
             bool print(const std::string& identifier,std::ostream& out)const;

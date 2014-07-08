@@ -233,6 +233,11 @@ declaration_and_affectation : declaration T_EQUAL value_tmp {
                                     $1->convert_to(*v);
                                 }
                             }
+                            | T_TYPE_AUTO T_INDENTIFIER T_EQUAL value_tmp {
+                                driver.context().create_or_change_value(*$2,std::move(*$4));
+                                DEL($2);
+                                DEL($4);
+                            }
                             ;
 
 affectation : T_INDENTIFIER T_EQUAL value_tmp {

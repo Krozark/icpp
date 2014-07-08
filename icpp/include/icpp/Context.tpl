@@ -38,21 +38,33 @@ namespace icpp
         return res;
     }
 
-    /*
     template<typename T>
     bool Context::create_or_change_value(const std::string& name,const T& val)
     {
         bool res = false;
-        auto f = values.find(name);
-        if(f == values.end())
+        Value* v = get(name,false);
+        if(v == nullptr)
         {
-            values.emplace(name,Value(val));
+            values.emplace(name,val);
             res = true;
         }
         else
-        {
-            f->second = val;
-        }
+            *v = val;
         return res;
-    }*/
+    }
+
+    template<typename T>
+    bool Context::create_or_change_value(const std::string& name,T&& val)
+    {
+        bool res = false;
+        Value* v = get(name,false);
+        if(v == nullptr)
+        {
+            values.emplace(name,std::move(val));
+            res = true;
+        }
+        else
+            *v = std::move(val);
+        return res;
+    }
 }

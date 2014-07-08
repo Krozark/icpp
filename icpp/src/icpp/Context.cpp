@@ -7,7 +7,7 @@ namespace icpp
     {
     }
 
-    Value* Context::get(const std::string& identifier)
+    Value* Context::get(const std::string& identifier,bool show_error)
     {
         Value* res = nullptr;
         Context* self = this;
@@ -21,13 +21,13 @@ namespace icpp
             else
                 res = &(f->second);
         }
-        if(not res)
+        if(not res and show_error)
             utils::log::warning("Icpp","Name",identifier,"is not define");
 
         return res;
     }
 
-    const Value* Context::get(const std::string& identifier)const
+    const Value* Context::get(const std::string& identifier,bool show_error)const
     {
         const Value* res = nullptr;
         const Context* self = this;
@@ -41,13 +41,13 @@ namespace icpp
             else
                 res = &(f->second);
         }
-        if(not res)
+        if(not res and show_error)
             utils::log::warning("Icpp","Name",identifier,"is not define");
 
         return res;
     }
 
-    bool Context::remove(const std::string& identifier)
+    bool Context::remove(const std::string& identifier,bool show_error)
     {
         bool res = false;
         Context* self = this;
@@ -65,7 +65,7 @@ namespace icpp
                 break;
             }
         }
-        if(not res)
+        if(not res and show_error)
             utils::log::warning("Icpp","Name",identifier,"is not define");
         
         return res;

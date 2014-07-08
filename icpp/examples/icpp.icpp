@@ -21,8 +21,10 @@ bool b = true //false
 int i = 42
 float f = 43.2
 string s = "string_test"
-//auto n = null
-//auto test = 68
+
+auto n = null
+auto test = 68
+auto test = "pwet" //change type
 //
 //tuple l = (42,"13","srn",63.5)
 //tab t //= [44,43.5,"test"]
