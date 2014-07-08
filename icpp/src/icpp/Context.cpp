@@ -43,23 +43,29 @@ namespace icpp
         return res;
     }
 
-    void Context::print(const std::string& identifier,std::ostream& out)const
+    bool Context::print(const std::string& identifier,std::ostream& out)const
     {
         const Value* v = get(identifier);
         if(v != nullptr){
             v->print(out)<<std::endl;
+            return true;
         }
         else
-            utils::log::error("Icpp","Name",identifier,"is not define");
+            utils::log::warning("Icpp","Name",identifier,"is not define");
+        return false;
     }
 
-    void Context::show(const std::string& identifier,std::ostream& out)const
+    bool Context::show(const std::string& identifier,std::ostream& out)const
     {
         const Value* v = get(identifier);
         if(v != nullptr)
+        {
             v->show(out)<<std::endl;
+            return true;
+        }
         else
-            utils::log::error("Icpp","Name",identifier,"is not define");
+            utils::log::warning("Icpp","Name",identifier,"is not define");
+        return false;
     }
 
     std::ostream& Context::print(std::ostream& out)const

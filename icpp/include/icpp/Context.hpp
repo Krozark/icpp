@@ -26,8 +26,8 @@ namespace icpp
             bool change_value(const std::string& name,const T& val);
 
 
-            void print(const std::string& identifier,std::ostream& out)const;
-            void show(const std::string& identifier,std::ostream& out)const;
+            bool print(const std::string& identifier,std::ostream& out)const;
+            bool show(const std::string& identifier,std::ostream& out)const;
 
             std::ostream& print(std::ostream& out)const;
             std::ostream& show(std::ostream& out)const;

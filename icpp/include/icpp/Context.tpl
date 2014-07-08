@@ -13,7 +13,7 @@ namespace icpp
         }
         else
         {
-            utils::log::error("Icpp","Value of name",name,"already exist in context");
+            utils::log::warning("Icpp","Value of name",name,"already exist in context");
         }
         return res;
     }
@@ -30,7 +30,7 @@ namespace icpp
         }
         else
         {
-            utils::log::error("Icpp","Name",name,"is not defined");
+            utils::log::warning("Icpp","Name",name,"is not defined");
         }
         return res;
     }

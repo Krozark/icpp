@@ -37,6 +37,24 @@
     #define DEL(x) delete x; x=nullptr;
 
     #define OUT std::cout
+
+/* tuple : T_BRACKET_OPEN T_BRACKET_CLOSE
+      ;
+
+dic : T_CURLY_BRACKET_OPEN T_CURLY_BRACKET_CLOSE
+    ;
+
+tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
+    ;
+t_value : T_VALUE_CHAR
+        | T_VALUE_BOOl
+        | T_VALUE_INT
+        | T_VALUE_FLOAT
+        | T_VALUE_STRING
+        | T_VALUE_NULL
+        // tuple, dic, tab
+        ;
+ */
 }
 
 
@@ -132,7 +150,9 @@ start:  statements T_EXIT {
 
 
 statements : statement {}
-           | statements statement {};
+           | statements statement {}
+           | error {error("Parse error");}
+           ;
 
 statement : T_EOL 
           | affectation T_EOL
@@ -149,34 +169,44 @@ affectation : affectation_char
             ;
 
 affectation_char : T_TYPE_CHAR T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
-                     driver.context().create_value(*$2,$4);
+                    bool p = driver.context().create_value(*$2,$4);
                     DEL($2);
+                    if(not p)
+                        YYERROR;
                  }
                  | T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
-                    driver.context().change_value(*$1,$3);
+                    bool p = driver.context().change_value(*$1,$3);
                     DEL($1);
+                    if(not p)
+                        YYERROR;
                  }
                  ;
 
 print : T_B_PRINT T_INDENTIFIER{
-        driver.context().print(*$2,OUT);
+        bool p = driver.context().print(*$2,OUT);
         DEL($2);
+        if(not p)
+            YYERROR;
       } 
       | T_B_PRINT {driver.context().print(OUT);} /* context */
       ;
 
 show : T_B_SHOW T_INDENTIFIER {
-        driver.context().show(*$2,OUT);
+        bool p = driver.context().show(*$2,OUT);
         DEL($2);
+        if(not p)
+            YYERROR;
      }
      | T_B_SHOW {driver.context().show(OUT);} /* context */
      ;
+
+
 
 %%
 
 void icpp::Parser::error(const std::string &message)
 {
-   std::cerr<<"Error line "<<icpp_line_no<<" : "<<message<<std::endl;; 
+   utils::log::error("Error","line",icpp_line_no,":",message);
 }
  
 /*Now that we have the Parser declared, we can declare the Scanner and implement the yylex function*/
