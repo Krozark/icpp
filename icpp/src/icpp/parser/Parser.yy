@@ -174,6 +174,7 @@ affectation_char : T_TYPE_CHAR T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
                     if(not p)
                         YYERROR;
                  }
+                 /*| T_VALUE_CHAR T_INDENTIFIER T_EQUAL value*/
                  | T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
                     bool p = driver.context().change_value(*$1,$3);
                     DEL($1);

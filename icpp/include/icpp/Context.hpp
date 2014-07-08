@@ -22,8 +22,11 @@ namespace icpp
             template<typename T>
             bool create_value(const std::string& name,const T& val);
 
-            template<typename T>
-            bool change_value(const std::string& name,const T& val);
+            bool change_value(const std::string& name,bool val);
+            bool change_value(const std::string& name,char val);
+            bool change_value(const std::string& name,int val);
+            bool change_value(const std::string& name,float val);
+            bool change_value(const std::string& name,std::string val);
 
 
             bool print(const std::string& identifier,std::ostream& out)const;

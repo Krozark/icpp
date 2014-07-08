@@ -17,21 +17,4 @@ namespace icpp
         }
         return res;
     }
-
-    template<typename T>
-    bool Context::change_value(const std::string& name,const T& val)
-    {
-        bool res = false;
-        auto f = values.find(name);
-        if(f != values.end())
-        {
-            //res = true;
-            utils::log::todo("Icpp","fonctionalaty not implemanted");
-        }
-        else
-        {
-            utils::log::warning("Icpp","Name",name,"is not defined");
-        }
-        return res;
-    }
 }

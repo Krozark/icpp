@@ -31,11 +31,15 @@ namespace icpp
             std::ostream& print(std::ostream& out)const;
             std::ostream& show(std::ostream& out)const;
 
-            std::string type_str()const;
 
-        private:
+            inline bool is_bool()const;
+            inline bool is_char()const;
+            inline bool is_int()const;
+            inline bool is_float()const;
+            inline bool is_string()const;
+            inline bool is_null()const;
 
-            enum Type {
+            enum class Type {
                 BOOL,
                 CHAR,
                 INT,
@@ -44,7 +48,15 @@ namespace icpp
                 //FUNCTION
                 NIL,
                 UNDEFINE
-            } type;
+            };
+
+            std::string type_str()const;
+
+            inline Type get_type()const;
+
+        private:
+
+            Type type;
 
             union {
                 bool        v_bool;
@@ -55,4 +67,5 @@ namespace icpp
             };
     };
 }
+#include <icpp/Value.tpl>
 #endif
