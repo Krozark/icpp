@@ -16,8 +16,17 @@ namespace icpp
             Context(const Context&) = delete;
             Context& operator=(const Context&) = delete;
 
+            /**
+             * \brief search in all context stack
+             */
             Value* get(const std::string& identifier,bool show_error =true);
             const Value* get(const std::string& identifier, bool show_error=true)const;
+
+            /**
+             * \brief search in current context only
+             */
+            Value* find(const std::string& identifier);
+            const Value* find(const std::string& identifier)const;
 
             bool remove(const std::string& identifier,bool show_error=true);
 

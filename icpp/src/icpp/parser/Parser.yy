@@ -17,6 +17,7 @@
 %code requires {
 
     #include <utility>
+    #include <list>
     #include <icpp/Value.hpp>
 
     extern int icpp_line_no; 
@@ -70,6 +71,8 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
     double          v_float;
     std::string*    v_string;
     icpp::Value*    v_value;
+
+    std::list<icpp::Value>* v_list_value;
     // Pointers to more complex classes
     /*
     utils::json::Object* v_object;
@@ -137,16 +140,19 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %start start
 /** Define types for union values */
     /* tokens */
-%type<v_char>   T_VALUE_CHAR
-%type<v_bool>   T_VALUE_BOOL
-%type<v_int>    T_VALUE_INT
-%type<v_float>  T_VALUE_FLOAT
-%type<v_string> T_VALUE_STRING
-%type<v_string> T_INDENTIFIER
+%type<v_char>           T_VALUE_CHAR
+%type<v_bool>           T_VALUE_BOOL
+%type<v_int>            T_VALUE_INT
+%type<v_float>          T_VALUE_FLOAT
+%type<v_string>         T_VALUE_STRING
+%type<v_string>         T_INDENTIFIER
     /* rules */
-%type<v_value>  value_tmp;
-%type<v_value>  declaration
-%type<v_value>  declaration_and_affectation
+%type<v_value>          value_tmp
+%type<v_value>          declaration
+%type<v_value>          declaration_and_affectation
+%type<v_list_value>     value_list
+
+/*%destructor {delete $$;} <v_string> <v_value> <v_list_value>*/
 
 
 %%
@@ -167,6 +173,7 @@ statement : T_EOL
           | declaration_and_affectation T_EOL
           | affectation T_EOL
           | bultins T_EOL
+          | import T_EOL
           ;
 
 declaration : T_TYPE_CHAR T_INDENTIFIER {
@@ -272,6 +279,42 @@ value_tmp : T_VALUE_CHAR {$$=new icpp::Value($1);}
           ;
 
 
+value_list : value_tmp {
+                $$=new std::list<icpp::Value>;
+                $$->emplace_back(*$1);
+                DEL($1);
+           
+           }| T_INDENTIFIER {
+                icpp::Value* v = driver.context().get(*$1);
+                DEL($1);
+                if(v == nullptr)
+                {
+                    YYERROR;
+                }
+                $$=new std::list<icpp::Value>;
+                $$->emplace_back(*v);
+           }
+           | value_list T_COMA value_tmp {
+                $$ = $1;
+                $1 = nullptr;
+                $$->emplace_back(*$3);
+                DEL($3);
+           }
+           | value_list T_COMA T_INDENTIFIER {
+                $$ = $1;
+                $1 = nullptr;
+                icpp::Value* v = driver.context().get(*$3);
+                if(v == nullptr)
+                {
+                    DEL($3);
+                    YYERROR;
+                }
+                $$->emplace_back(*$3);
+                DEL($3);
+           }
+           ;
+
+
 bultins : help
         | print
         | show
@@ -287,23 +330,20 @@ help : T_B_HELP {
      }
      ;
 
-print : T_B_PRINT T_INDENTIFIER{
-        bool p = driver.context().print(*$2,OUT);
+print : T_B_PRINT value_list {
+        for(icpp::Value& v : *$2)
+            v.print(OUT)<<" ";
+        OUT<<std::endl;
         DEL($2);
-        if(not p)
-            YYERROR;
-      } 
-      | T_B_PRINT value_tmp {$2->print(OUT)<<std::endl;DEL($2);}
+      }
       | T_B_PRINT {driver.context().print(OUT);} /* context */
       ;
 
-show : T_B_SHOW T_INDENTIFIER {
-        bool p = driver.context().show(*$2,OUT);
+show : T_B_SHOW value_list {
+        for(icpp::Value& v : *$2)
+            v.show(OUT)<<std::endl;
         DEL($2);
-        if(not p)
-            YYERROR;
      }
-     | T_B_SHOW value_tmp {$2->show(OUT)<<std::endl;DEL($2);}
      | T_B_SHOW {driver.context().show(OUT);} /* context */
      ;
 
@@ -341,6 +381,38 @@ source : T_B_SOURCE T_VALUE_STRING {
        | T_B_SOURCE T_INDENTIFIER {
        }
        ;
+
+import : T_IMPORT_IMPORT T_VALUE_STRING T_OPERATOR_AS T_INDENTIFIER {
+           Value* v = driver.context().find(*$4);
+            if(v != nullptr)
+            {
+                utils::log::warning("Import","Name",*$4,"already exist in current context");
+                DEL($2);
+                DEL($4);
+                YYERROR;
+            }
+            DEL($2);
+            DEL($4);
+            utils::log::todo("import","fonctionalaty not implemented");
+       }
+       | T_IMPORT_IMPORT T_INDENTIFIER T_OPERATOR_AS T_INDENTIFIER {
+            Value* id = driver.context().get(*$2);
+            DEL($2);
+            if(id == nullptr)
+            {
+                DEL($4);
+                YYERROR;
+            }
+            Value* v = driver.context().find(*$4);
+            if(v != nullptr)
+            {
+                utils::log::warning("Import","Name",*$4,"already exist in current context");
+                DEL($4);
+                YYERROR;
+            }
+            DEL($4);
+            utils::log::todo("import","fonctionalaty not implemented");
+       }
 
 %%
 

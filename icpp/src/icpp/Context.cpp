@@ -47,6 +47,24 @@ namespace icpp
         return res;
     }
 
+    Value* Context::find(const std::string& identifier)
+    {
+        Value* res = nullptr;
+        auto f = values.find(identifier);
+        if(f != values.end())
+            res = &f->second;
+        return res;
+    }
+
+    const Value* Context::find(const std::string& identifier)const
+    {
+        const Value* res = nullptr;
+        auto f = values.find(identifier);
+        if(f != values.end())
+            res = &f->second;
+        return res;
+    }
+
     bool Context::remove(const std::string& identifier,bool show_error)
     {
         bool res = false;
@@ -112,9 +130,9 @@ namespace icpp
     {
         for(auto& u : values)
         {
-            out<<u.first<<" : ";
+            out<<u.first<<" : {";
             u.second.show(out);
-            out<<"\n";
+            out<<"}\n";
         }
         if(parent)
             parent->show(out);

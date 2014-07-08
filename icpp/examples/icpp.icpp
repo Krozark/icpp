@@ -1,4 +1,6 @@
-help
+print "*******************************"
+print "********* DECLARATION *********"
+print "*******************************"
 //types
 print "******* create c **********"
 char c
@@ -17,6 +19,8 @@ c3 = c2
 print c3
 show c3
 
+print "******* create all types **********"
+
 bool b = true //false
 int i = 42
 float f = 43.2
@@ -25,14 +29,62 @@ string s = "string_test"
 auto n = null
 auto test = 68
 auto test = "pwet" //change type
+
+print "******* double declaration of i (will make a error) **********"
+int i = 72
+
 //
 //tuple l = (42,"13","srn",63.5)
 //tab t //= [44,43.5,"test"]
 //dict di //= {"blah" : 44, "bhal2" : 54.8, "blah3" : "truc"}
+
+print "*******************************"
+print "*********** PRINT *************"
+print "*******************************"
 //
+print "******* test print context **********"
+print
+print "******* test show context ***********"
+show
+
+print "********** delete test,s, c2,c3 *************"
+
+delete test
+delete s
+delete c2
+delete c3
+
+print
+
+print "*******************************"
+print "******* COMPILATION ***********"
+print "*******************************"
+
+////compilation
+string file = "f.cpp"
+//compile "f.cpp" as libf
+//compile file as libf
+//from libf import int print
 //
-//// import
-//from "f.cpp" import print as p
+//compile "f.cpp", "f.cpp" as libf2
+//
+//compile "f.cpp", "f.cpp" with flags("o3","Wall") as libf3
+//
+//compile "f.cpp", "f.cpp" with flags("o3","Wall") link(p) as libf4
+//
+//compile "127.0.0.1:8000/test.cpp" as libf5
+
+print "*******************************"
+print "********** IMPORT *************"
+print "*******************************"
+
+import "f" as test_f
+
+file = "f"
+import file as test_f
+
+//from "f.cpp" import test_f as p
+//from file import test_f as p
 //print p //function
 //show p //type : function, return: ???, param: ???
 //
@@ -40,10 +92,7 @@ auto test = "pwet" //change type
 //print p //function
 //show p //type : function, return: int, param: (int)
 //
-print "******* test print context **********"
-print
-print "******* test show context **********"
-show
+
 //from "f.cpp" import int print(int*)
 //from "f.cpp" import int print(const string&)
 //from "f.cpp" import int print(int**)
@@ -61,6 +110,9 @@ show
 //show test //type : int, value : 68
 //
 //
+print "*******************************"
+print "********** BUILTINS ***********"
+print "*******************************"
 ////run
 //run p(42) //synchon
 //run p(i) //synchon
@@ -77,19 +129,6 @@ show
 //run p(3) as detached //asynchone
 //
 //
-////compilation
-//string file = "f.cpp"
-//compile "f.cpp" as libf
-//compile file as libf
-//from libf import int print
-//
-//compile "f.cpp", "f.cpp" as libf2
-//
-//compile "f.cpp", "f.cpp" with flags("o3","Wall") as libf3
-//
-//compile "f.cpp", "f.cpp" with flags("o3","Wall") link(p) as libf4
-//
-//compile "127.0.0.1:8000/test.cpp" as libf5
 //
 ////extern source
 //wget "127.0.0.1:8000/test.cpp" as wget_file
@@ -98,4 +137,8 @@ show
 //source source_file
 //
 //
+
+print "******** help *******"
+help
+print "******** exit *******"
 exit
