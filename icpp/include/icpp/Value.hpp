@@ -3,6 +3,9 @@
 
 #include <string>
 #include <iostream>
+#include <memory>
+
+#include <utils/sys.hpp>
 
 namespace icpp
 {
@@ -16,6 +19,8 @@ namespace icpp
             explicit Value(double d);
             explicit Value(const std::string& s);
             explicit Value(std::string&& s);
+            
+            explicit Value(utils::sys::Library* lib);
 
             Value(const Value& other);
             Value& operator=(const Value& other);
@@ -61,6 +66,7 @@ namespace icpp
                 FLOAT,
                 STRING,
                 //FUNCTION
+                LIBRARY,
                 NIL,
                 UNDEFINE
             };
@@ -74,11 +80,13 @@ namespace icpp
             Type type;
 
             union {
-                bool        v_bool;
-                char        v_char;
-                int         v_int;
-                double      v_float;
-                std::string* v_string;
+                bool                    v_bool;
+                char                    v_char;
+                int                     v_int;
+                double                  v_float;
+                std::string*            v_string;
+
+                std::shared_ptr<utils::sys::Library>    v_library;
             };
     };
 }

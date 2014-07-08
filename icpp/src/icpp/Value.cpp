@@ -28,6 +28,12 @@ namespace icpp
     Value::Value(std::string&& s) : type(Type::STRING), v_string(new std::string(std::move(s)))
     {};
 
+    Value::Value(utils::sys::Library* lib) : type(Type::LIBRARY)
+    {
+        new(&v_library) std::shared_ptr<utils::sys::Library>;
+        v_library.reset(lib);
+    }
+
     Value::Value(const Value& other) : type(other.type)
     {
         switch(type)

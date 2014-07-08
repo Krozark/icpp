@@ -389,7 +389,15 @@ compile : compile_cmd_or_options T_OPERATOR_AS T_INDENTIFIER {
             $1->output(*$3);
 
             try{
-                utils::sys::Library* lib= new utils::sys::Library($1->get());
+                utils::sys::Library* lib = new utils::sys::Library($1->get());
+                bool p = driver.context().create_value(lib);
+                if(not p)
+                {
+                    DEL($3);
+                    DEL($1);
+                    delete lib;
+                    YYERROR;
+                }
             } catch (std::runtime_error& e) {
                 utils::log::error("compile",e.what());
                 DEL($3);
