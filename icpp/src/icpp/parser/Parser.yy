@@ -183,6 +183,7 @@ statement : T_EOL
           | affectation T_EOL
           | bultins T_EOL
           | import T_EOL
+          | from_import T_EOL
           ;
 
 declaration : T_TYPE_CHAR T_INDENTIFIER {
@@ -509,9 +510,17 @@ import : T_IMPORT_IMPORT T_VALUE_STRING T_OPERATOR_AS T_INDENTIFIER {
                 DEL($4);
                 YYERROR;
             }
+            utils::sys::Library* lib = new utils::sys::Library(*$2);
             DEL($2);
+            bool er = not lib->load();
+            if(not er)
+                er = not driver.context().create_value(*$4,lib);
             DEL($4);
-            utils::log::todo("import","fonctionalaty not implemented");
+            if(er)
+            {
+                delete lib;
+                YYERROR;
+            }
        }
        | T_IMPORT_IMPORT T_INDENTIFIER T_OPERATOR_AS T_INDENTIFIER {
             Value* id = driver.context().get(*$2);
@@ -521,6 +530,13 @@ import : T_IMPORT_IMPORT T_VALUE_STRING T_OPERATOR_AS T_INDENTIFIER {
                 DEL($4);
                 YYERROR;
             }
+            if(not id->is_string())
+            {
+                utils::log::warning("compile","Value",*id,"is not of type string");
+                DEL($4);
+                YYERROR;
+            }
+
             Value* v = driver.context().find(*$4);
             if(v != nullptr)
             {
@@ -528,9 +544,23 @@ import : T_IMPORT_IMPORT T_VALUE_STRING T_OPERATOR_AS T_INDENTIFIER {
                 DEL($4);
                 YYERROR;
             }
+            utils::sys::Library* lib = new utils::sys::Library(id->as_string());
+            bool er = not lib->load();
+            if(not er)
+                er = not driver.context().create_value(*$4,lib);
             DEL($4);
-            utils::log::todo("import","fonctionalaty not implemented");
+            if(er)
+            {
+                delete lib;
+                YYERROR;
+            }
        }
+
+from_import : T_IMPORT_FROM T_INDENTIFIER T_IMPORT_IMPORT func_type /*T_OPERATOR_AS T_INDENTIFIER*/
+            ;
+
+func_type : T_INDENTIFIER
+          ;
 
 %%
 

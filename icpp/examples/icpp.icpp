@@ -74,12 +74,10 @@ print "*******************************"
 print "********** IMPORT *************"
 print "*******************************"
 
-import "f" as test_f
-
-file = "f"
+file = "./libf"
 import file as test_f
 
-//from "f.cpp" import test_f as p
+from test_f import test_print as p
 //from file import test_f as p
 //print p //function
 //show p //type : function, return: ???, param: ???
