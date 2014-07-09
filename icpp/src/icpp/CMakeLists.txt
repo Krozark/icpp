@@ -43,6 +43,7 @@ set(ROOT_SRC
     ${FlexOutputSrc}
 
     ${SRCROOT}/Context.cpp
+    ${SRCROOT}/Function.cpp
     ${SRCROOT}/Value.cpp
 
 )
@@ -54,7 +55,11 @@ set(ROOT_HEADER
     ${BisonOutputExtra}
 
     ${INCROOT}/Context.hpp
+    ${INCROOT}/Context.tpl
+    ${INCROOT}/Function.hpp
+    ${INCROOT}/Function.tpl
     ${INCROOT}/Value.hpp
+    ${INCROOT}/Value.tpl
 )
 #FILES
 set(FILES_HEADER

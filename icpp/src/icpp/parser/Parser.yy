@@ -559,8 +559,23 @@ import : T_IMPORT_IMPORT T_VALUE_STRING T_OPERATOR_AS T_INDENTIFIER {
 from_import : T_IMPORT_FROM T_INDENTIFIER T_IMPORT_IMPORT func_type /*T_OPERATOR_AS T_INDENTIFIER*/
             ;
 
-func_type : T_INDENTIFIER
+func_type : func_return T_INDENTIFIER {
+            Value* v = driver.context().get(*$1);
+            if(v == nullptr)//func name
+            {
+            }
+            else
+            {
+            }
+            DEL($1);
+          }
           ;
+func_return : /* void */
+            | T_TYPE_CHAR
+            | T_TYPE_BOOL
+            | T_TYPE_INT
+            | T_TYPE_STRING
+            ;
 
 %%
 

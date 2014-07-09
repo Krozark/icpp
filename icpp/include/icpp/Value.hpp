@@ -79,6 +79,7 @@ namespace icpp
             inline Type get_type()const;
 
         private:
+            friend class VFunction;
 
             Type type;
 
