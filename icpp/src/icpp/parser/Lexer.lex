@@ -85,7 +85,63 @@
     return token::T_MATHS_MUL;
 }
 
-    /* % */
+"%" {
+    return token::T_MATHS_MOD;
+}
+
+"^" {
+    return token::T_MATHS_POWER;
+}
+
+    /* logical */
+
+and {
+    return token::T_LOGICAL_AND;
+}
+
+or {
+    return token::T_LOGICAL_OR;
+}
+
+xor {
+    return token::T_LOGICAL_XOR;
+}
+
+">" {
+    return token::T_LOGICAL_GT;
+}
+
+"<=" {
+    return token::T_LOGICAL_GTE;
+}
+
+"<" {
+    return token::T_LOGICAL_LT;
+}
+
+">=" {
+    return token::T_LOGICAL_LTE;
+}
+
+"equals" {
+    return token::T_LOGICAL_EQUALS;
+}
+
+"==" {
+    return token::T_LOGICAL_EQUALS;
+}
+
+"not_equals" {
+    return token::T_LOGICAL_NOT_EQUALS;
+}
+
+"!=" {
+    return token::T_LOGICAL_NOT_EQUALS;
+}
+
+not {
+    return token::T_LOGICAL_NOT;
+}
 
         /* pointer */
 
@@ -113,8 +169,6 @@ import {
 as {
     return token::T_OPERATOR_AS;
 }
-
-    /* and or xor not is is_not  */
 
 with {
     return token::T_OPERATOR_WITH;
@@ -211,7 +265,8 @@ false {
     return token::T_VALUE_INT;
 }
 
-[-+]?[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?  {
+[-+]?[0-9]*\.?[0-9]+ {
+    /*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?*/
     yylval->v_float = ::atof(yytext);
     return token::T_VALUE_FLOAT;
 }

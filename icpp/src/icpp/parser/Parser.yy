@@ -96,6 +96,19 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %token      T_MATHS_SUB             "symbol -"
 %token      T_MATHS_DIV             "symbol /"
 %token      T_MATHS_MUL             "symbol *"
+%token      T_MATHS_MOD             "symbol %"
+%token      T_MATHS_POWER           "symbol ^"
+    /* logical */
+%token      T_LOGICAL_AND           "logical and"
+%token      T_LOGICAL_OR            "logical or"
+%token      T_LOGICAL_XOR           "logical xor"
+%token      T_LOGICAL_GT            "logical > operator"
+%token      T_LOGICAL_GTE           "logical >= operator"
+%token      T_LOGICAL_LT            "logical < operator"
+%token      T_LOGICAL_LTE           "logical <= operator"
+%token      T_LOGICAL_EQUALS        "logical equals operator"
+%token      T_LOGICAL_NOT_EQUALS    "logical not equals operator"
+%token      T_LOGICAL_NOT           "logical not operator"
     /* pointer */
 %token      T_AMPERSAND             "symbol &"
     /* kewords */
@@ -136,6 +149,20 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
     /* identifier */
 %token      T_INDENTIFIER           "identifier"
     
+%left T_COMA T_COLON
+%right T_IMPORT_FROM T_IMPORT_IMPORT T_B_HELP T_B_PRINT T_B_SHOW T_B_DELETE T_B_WGET T_B_RUN T_B_COMPILE T_B_SOURCE
+%right T_INDENTIFIER T_VALUE_CHAR T_VALUE_BOOL T_VALUE_INT T_VALUE_FLOAT T_VALUE_STRING T_VALUE_NULL
+%right T_TYPE_CHAR T_TYPE_BOOL T_TYPE_INT T_TYPE_FLOAT T_TYPE_STRING T_TYPE_TUPLE T_TYPE_TAB T_TYPE_DICT T_TYPE_AUTO
+%left T_LOGICAL_OR T_LOGICAL_XOR
+%left T_LOGICAL_AND
+%left T_EQUAL T_LOGICAL_GT T_LOGICAL_GTE T_LOGICAL_LT T_LOGICAL_LTE T_LOGICAL_EQUALS T_LOGICAL_NOT_EQUALS
+%left T_MATHS_ADD T_MATHS_SUB T_MATHS_MOD
+%left T_MATHS_MUL T_MATHS_DIV
+%left T_MATHS_POWER
+%nonassoc prec_sub_u T_LOGICAL_NOT
+/*%right prec_identifier*/
+%right T_SQUARE_BRACKET_OPEN T_CURLY_BRACKET_OPEN
+%right T_BRACKET_OPEN
 
 
 %start start
@@ -154,6 +181,7 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %type<v_value>          func_call
 %type<v_value>          affectation
 %type<v_value>          declaration_and_affectation
+%type<v_value>          operators
 
 %type<v_list_value>     value_list
 
@@ -311,7 +339,7 @@ affectation : identifier_list T_EQUAL value {
             }
             ;
 
-identifier_list : T_INDENTIFIER {
+identifier_list : T_INDENTIFIER /*%prec prec_identifier*/{
                     $$=new std::list<std::string*>;
                     $$->emplace_back($1);
                     $1=nullptr;
@@ -342,6 +370,10 @@ value_tmp : T_VALUE_CHAR {$$=new icpp::Value($1);}
             $1=nullptr;
           }
           | declaration_and_affectation {
+            $$=$1;
+            $1=nullptr;
+          }
+          | operators {
             $$=$1;
             $1=nullptr;
           }
@@ -720,6 +752,91 @@ func_call   : T_INDENTIFIER T_BRACKET_OPEN value_list T_BRACKET_CLOSE {
                 DEL($3);//params
             }
             ;
+
+operators : value T_MATHS_ADD value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_MATHS_SUB value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_MATHS_DIV value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_MATHS_MUL value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_MATHS_MOD value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_MATHS_POWER value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_AND value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_OR value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_XOR value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_GT value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_GTE value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_LT value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_LTE value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_EQUALS value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            | value T_LOGICAL_NOT_EQUALS value {
+                $$=$1;
+                $1=nullptr;
+                DEL($3);
+            }
+            |T_MATHS_SUB value %prec prec_sub_u {
+                $$=$2;
+                $2=nullptr;
+            }
+            | T_LOGICAL_NOT value {
+                $$=$2;
+                $2=nullptr;
+            }
+            ; 
 
 %%
 
