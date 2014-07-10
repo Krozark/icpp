@@ -30,7 +30,7 @@ namespace icpp
         return type == Type::NIL;
     }
 
-    inline bool Value::is_lib()const
+    inline bool Value::is_library()const
     {
         return type == Type::LIBRARY;
     }

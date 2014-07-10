@@ -9,6 +9,8 @@
 
 namespace icpp
 {
+    class VFunction;
+
     class Value
     {
         public:
@@ -21,6 +23,7 @@ namespace icpp
             explicit Value(std::string&& s);
             
             explicit Value(utils::sys::Library* lib);
+            explicit Value(VFunction* func);
 
             Value(const Value& other);
             Value& operator=(const Value& other);
@@ -35,6 +38,7 @@ namespace icpp
             Value& operator=(const std::string& s);
             Value& operator=(std::string&& s);
             Value& operator=(utils::sys::Library* lib);
+            Value& operator=(VFunction* func);
 
             ~Value();
 
@@ -53,7 +57,8 @@ namespace icpp
             inline bool is_float()const;
             inline bool is_string()const;
             inline bool is_null()const;
-            inline bool is_lib()const;
+            inline bool is_library()const;
+            inline bool is_function()const;
 
             inline bool as_bool()const;
             inline char as_char()const;
@@ -61,6 +66,7 @@ namespace icpp
             inline double as_float()const;
             inline const std::string& as_string()const;
             inline const utils::sys::Library& as_library()const;
+            inline VFunction& as_function()const;
 
             enum class Type {
                 BOOL,
@@ -68,8 +74,10 @@ namespace icpp
                 INT,
                 FLOAT,
                 STRING,
-                //FUNCTION
+
                 LIBRARY,
+                FUNCTION,
+
                 NIL,
                 UNDEFINE
             };
@@ -91,6 +99,7 @@ namespace icpp
                 std::string*            v_string;
 
                 std::shared_ptr<utils::sys::Library>    v_library;
+                std::shared_ptr<VFunction>              v_function;
             };
     };
 }

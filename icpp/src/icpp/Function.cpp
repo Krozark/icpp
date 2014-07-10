@@ -3,12 +3,17 @@
 namespace icpp
 {
     /** VFunction **/
-    VFunction::VFunction(void* f) : func(f)
+    VFunction::VFunction() : func(nullptr)
     {
     }
 
     VFunction::~VFunction()
     {
+    }
+
+    void VFunction::setf(void* f)
+    {
+        func = f;
     }
     
     void VFunction::bind_param(const Value& param,av_alist& p)
@@ -58,5 +63,40 @@ namespace icpp
     void Function<std::string>::bind_ret(void* f,av_alist& p,std::string& res)
     {
         av_start_struct(p,f,std::string,0,&res);
+    }
+
+    template<>
+    std::ostream& Function<bool>::print(std::ostream& out)const
+    {
+        out<<"bool";
+        return out;
+    }
+
+    template<>
+    std::ostream& Function<char>::print(std::ostream& out)const
+    {
+        out<<"char";
+        return out;
+    }
+
+    template<>
+    std::ostream& Function<int>::print(std::ostream& out)const
+    {
+        out<<"int";
+        return out;
+    }
+
+    template<>
+    std::ostream& Function<double>::print(std::ostream& out)const
+    {
+        out<<"float";
+        return out;
+    }
+
+    template<>
+    std::ostream& Function<std::string>::print(std::ostream& out)const
+    {
+        out<<"string";
+        return out;
     }
 }

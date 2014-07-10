@@ -1,8 +1,11 @@
 #include <icpp/Value.hpp>
+
+#include <icpp/Function.hpp>
+
 #include <stdlib.h>
+#include <functional>
 
 #include <utils/log.hpp>
-#include <functional>
 
 namespace icpp
 {
@@ -30,8 +33,12 @@ namespace icpp
 
     Value::Value(utils::sys::Library* lib) : type(Type::LIBRARY)
     {
-        new(&v_library) std::shared_ptr<utils::sys::Library>;
-        v_library.reset(lib);
+        new(&v_library) std::shared_ptr<utils::sys::Library>(lib);
+    }
+
+    Value::Value(VFunction* func) : type(Type::FUNCTION)
+    {
+        new(&v_function) std::shared_ptr<VFunction>(func);
     }
 
     Value::Value(const Value& other) : type(other.type)
@@ -49,8 +56,15 @@ namespace icpp
             case Type::STRING:
                 v_string = new std::string(*other.v_string);break;
             case Type::LIBRARY:
+            {
                 new(&v_library) std::shared_ptr<utils::sys::Library>;
-                v_library = other.v_library;break;
+                v_library = other.v_library;
+            }break;
+            case Type::FUNCTION:
+            {
+                new(&v_function) std::shared_ptr<VFunction>;
+                v_function = other.v_function;
+            }break;
             default:break;
         }
     }
@@ -72,8 +86,15 @@ namespace icpp
             case Type::STRING:
                 v_string = new std::string(*other.v_string);break;
             case Type::LIBRARY:
+            {
                 new(&v_library) std::shared_ptr<utils::sys::Library>;
-                v_library = other.v_library;break;
+                v_library = other.v_library;
+            }break;
+            case Type::FUNCTION:
+            {
+                new(&v_function) std::shared_ptr<VFunction>;
+                v_function = other.v_function;
+            }break;
             default:break;
         }
         return *this;
@@ -95,9 +116,17 @@ namespace icpp
                 v_string = other.v_string;
                 other.type=Type::UNDEFINE;break;
             case Type::LIBRARY:
+            {
                 new(&v_library) std::shared_ptr<utils::sys::Library>;
                 v_library = std::move(other.v_library);
-                other.type=Type::UNDEFINE;break;
+                other.type=Type::UNDEFINE;
+            }break;
+            case Type::FUNCTION:
+            {
+                new(&v_function) std::shared_ptr<VFunction>;
+                v_function = std::move(other.v_function);
+                other.type=Type::UNDEFINE;
+            }break;
             default:break;
         }
     }
@@ -120,9 +149,17 @@ namespace icpp
                 v_string = other.v_string;
                 other.type=Type::UNDEFINE;break;
             case Type::LIBRARY:
+            {
                 new(&v_library) std::shared_ptr<utils::sys::Library>;
                 v_library = std::move(other.v_library);
-                other.type=Type::UNDEFINE;break;
+                other.type=Type::UNDEFINE;
+            }break;
+            case Type::FUNCTION:
+            {
+                new(&v_function) std::shared_ptr<VFunction>;
+                v_function = std::move(other.v_function);
+                other.type=Type::UNDEFINE;
+            }break;
             default:break;
         }
         return *this;
@@ -204,19 +241,42 @@ namespace icpp
         {
             this->~Value();
             type = Type::LIBRARY;
-            new(&v_library) std::shared_ptr<utils::sys::Library>;
+            new(&v_library) std::shared_ptr<utils::sys::Library>(lib);
         }
         else
             v_library.reset(lib);
         return *this;
     }
 
+    Value& Value::operator=(VFunction* func)
+    {
+        if(type != Type::FUNCTION)
+        {
+            this->~Value();
+            type = Type::FUNCTION;
+            new(&v_function) std::shared_ptr<VFunction>(func);
+        }
+        else
+            v_function.reset(func);
+        return *this;
+    }
+
     Value::~Value()
     {
-        if(type==Type::STRING)
-            delete v_string;
-        else if(type == Type::LIBRARY)
-            v_library.~shared_ptr();
+        switch(type)
+        {
+            case Type::STRING:
+                delete v_string;
+            break;
+            case Type::LIBRARY:
+                v_library.~shared_ptr();
+            break;
+            case Type::FUNCTION:
+                v_function.~shared_ptr();
+            break;
+            default:
+                break;
+        }
     }
 
     bool Value::convert_to(const Value& other)
@@ -356,6 +416,8 @@ namespace icpp
                 out<<*v_string;break;
             case Type::LIBRARY:
                 out<<v_library->name();break;
+            case Type::FUNCTION:
+                v_function->print(out);break;
             case Type::NIL:
                 out<<"null";break;
             default:
@@ -381,6 +443,8 @@ namespace icpp
                 out<<"string, value: \""<<*v_string<<"\"";break;
             case Type::LIBRARY:
                 out<<"library, value: "<<v_library->name();break;
+            case Type::FUNCTION:
+                out<<"function, value : ";v_function->print(out);break;
             case Type::NIL:
                 out<<"null";break;
             default:
@@ -411,6 +475,8 @@ namespace icpp
                 return "string";
             case Type::LIBRARY:
                 return "library";
+            case Type::FUNCTION:
+                return "function";
             case Type::NIL:
                 return "null";
             default:

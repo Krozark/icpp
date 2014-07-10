@@ -2,8 +2,8 @@ namespace icpp
 {
     /** Function **/
     template<typename Ret>
-    Function<Ret>::Function(void* f)  : VFunction(f)
-    {}
+    Function<Ret>::Function() : VFunction()
+    {};
 
     template<typename Ret>
     Function<Ret>::~Function()
@@ -12,19 +12,28 @@ namespace icpp
     template<typename Ret>
     Value Function<Ret>::call(const std::list<Value>& params)const
     {
-        av_alist p;
-        //return type
         Ret res;
-        bind_ret(func,p,res);
+        if(func != nullptr)
+        {
+            av_alist p;
+            //return type
+            bind_ret(func,p,res);
 
-        //values
-        for(const Value& v : params)
-            bind_param(v,p);
+            //values
+            for(const Value& v : params)
+                bind_param(v,p);
 
-        //run
-        av_call(p);
+            //run
+            av_call(p);
+        }
+        return Value(std::move(res));
+    }
 
-        return {std::move(res)};
+    template<typename Ret>
+    std::ostream& Function<Ret>::print(std::ostream& out)const
+    {
+        out<<"???";
+        return out;
     }
 
     template<typename Ret>
@@ -41,23 +50,33 @@ namespace icpp
             Function(const Function&) = delete;
             Function& operator=(const Function&) = delete;
 
-            Function(void* f) : VFunction(f){};
+            Function() : VFunction(){};
+
             virtual ~Function(){};
 
             virtual Value call(const std::list<Value>& params)const
             {
-                av_alist p;
-                //return type
-                av_start_void(p,func);
+                if(func != nullptr)
+                {
+                    av_alist p;
+                    //return type
+                    av_start_void(p,func);
 
-                //values
-                for(const Value& v : params)
-                    bind_param(v,p);
+                    //values
+                    for(const Value& v : params)
+                        bind_param(v,p);
 
-                //run
-                av_call(p);
-
+                    //run
+                    av_call(p);
+                }
                 return Value();
             }
+
+            virtual std::ostream& print(std::ostream& out)const
+            {
+                out<<"null";
+                return out;
+            }
+
     };
 }

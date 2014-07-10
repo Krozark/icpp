@@ -11,10 +11,14 @@ namespace icpp
     class VFunction
     {
         public:
-            VFunction(void* f);
+            VFunction();
             virtual ~VFunction();
 
             virtual Value call(const std::list<Value>& params)const = 0;
+
+            virtual std::ostream& print(std::ostream& out)const = 0;
+
+            void setf(void* func);
 
         protected:
             void* func;
@@ -28,10 +32,13 @@ namespace icpp
             Function(const Function&) = delete;
             Function& operator=(const Function&) = delete;
 
-            Function(void* f);
+            Function();
+
             virtual ~Function();
 
             virtual Value call(const std::list<Value>& params)const;
+
+            virtual std::ostream& print(std::ostream& out)const;
 
         protected:
             static void bind_ret(void* f,av_alist& p,Ret& res);

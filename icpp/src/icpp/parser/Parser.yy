@@ -21,6 +21,7 @@
     #include <utils/sys.hpp>
 
     #include <icpp/Value.hpp>
+    #include <icpp/Function.hpp>
 
     extern int icpp_line_no; 
 
@@ -83,6 +84,7 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
     */
 
     utils::sys::Compiler*   v_compiler;
+    icpp::VFunction*        v_function;
 } 
 
     
@@ -160,6 +162,8 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %type<v_compiler>       compile_cmd
 %type<v_compiler>       compile_cmd_options
 %type<v_compiler>       compile_cmd_or_options
+
+%type<v_function>       func_return
 
 /*%destructor {delete $$;} <v_string> <v_value> <v_list_value>*/
 
@@ -556,25 +560,22 @@ import : T_IMPORT_IMPORT T_VALUE_STRING T_OPERATOR_AS T_INDENTIFIER {
             }
        }
 
-from_import : T_IMPORT_FROM T_INDENTIFIER T_IMPORT_IMPORT func_type /*T_OPERATOR_AS T_INDENTIFIER*/
-            ;
-
-func_type : func_return T_INDENTIFIER {
-            Value* v = driver.context().get(*$1);
+from_import : T_IMPORT_FROM T_INDENTIFIER T_IMPORT_IMPORT func_return T_INDENTIFIER T_OPERATOR_AS T_INDENTIFIER {
+            /*Value* v = driver.context().get(*$1);
             if(v == nullptr)//func name
             {
             }
             else
             {
             }
-            DEL($1);
+            DEL($1);*/
           }
           ;
-func_return : /* void */
-            | T_TYPE_CHAR
-            | T_TYPE_BOOL
-            | T_TYPE_INT
-            | T_TYPE_STRING
+func_return : /* void */{$$=new icpp::Function<void>();}
+            | T_TYPE_CHAR {$$=new icpp::Function<char>();}
+            | T_TYPE_BOOL {$$=new icpp::Function<bool>();}
+            | T_TYPE_INT {$$=new icpp::Function<int>();}
+            | T_TYPE_STRING {$$=new icpp::Function<std::string>();}
             ;
 
 %%
