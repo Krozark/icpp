@@ -30,7 +30,7 @@ namespace icpp
     }
 
     template<typename Ret>
-    std::ostream& Function<Ret>::print(std::ostream& out)const
+    std::ostream& Function<Ret>::show(std::ostream& out)const
     {
         out<<"???";
         return out;
@@ -72,7 +72,7 @@ namespace icpp
                 return Value();
             }
 
-            virtual std::ostream& print(std::ostream& out)const
+            virtual std::ostream& show(std::ostream& out)const
             {
                 out<<"null";
                 return out;

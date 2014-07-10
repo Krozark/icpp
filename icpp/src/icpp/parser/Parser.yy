@@ -53,14 +53,6 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
     ;
  */
 
-/*affectation_char : T_TYPE_CHAR T_INDENTIFIER T_EQUAL T_VALUE_CHAR {
-                    bool p = driver.context().create_value(*$2,$4);
-                    DEL($2);
-                    if(not p)
-                        YYERROR;
-                 }
-                 ;
-*/
 }
 
 
@@ -152,10 +144,12 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %type<v_float>          T_VALUE_FLOAT
 %type<v_string>         T_VALUE_STRING
 %type<v_string>         T_INDENTIFIER
+%type<v_string>         func_name
     /* rules */
 %type<v_value>          value_tmp
 %type<v_value>          declaration
 %type<v_value>          declaration_and_affectation
+%type<v_value>          func_call
 
 %type<v_list_value>     value_list
 
@@ -165,7 +159,7 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 
 %type<v_function>       func_return
 
-/*%destructor {delete $$;} <v_string> <v_value> <v_list_value>*/
+%destructor {delete $$;} <v_string> <v_value> <v_list_value>
 
 
 %%
@@ -182,12 +176,17 @@ statements : statement {}
            ;
 
 statement : T_EOL 
+          | T_INDENTIFIER T_EOL {
+            DEL($1);
+            utils::log::info("Usless","Line",icpp_line_no-1,"as no effect");
+          }
           | declaration T_EOL
           | declaration_and_affectation T_EOL
           | affectation T_EOL
           | bultins T_EOL
           | import T_EOL
           | from_import T_EOL
+          | func_call T_EOL {DEL($1);}
           ;
 
 declaration : T_TYPE_CHAR T_INDENTIFIER {
@@ -290,6 +289,7 @@ value_tmp : T_VALUE_CHAR {$$=new icpp::Value($1);}
           | T_VALUE_FLOAT {$$=new icpp::Value($1);}
           | T_VALUE_STRING {$$=new icpp::Value(std::move(*$1));DEL($1);}
           | T_VALUE_NULL  {$$=new icpp::Value();}
+          | func_call {$$=$1;$1=nullptr;}
           ;
 
 
@@ -560,22 +560,94 @@ import : T_IMPORT_IMPORT T_VALUE_STRING T_OPERATOR_AS T_INDENTIFIER {
             }
        }
 
-from_import : T_IMPORT_FROM T_INDENTIFIER T_IMPORT_IMPORT func_return T_INDENTIFIER T_OPERATOR_AS T_INDENTIFIER {
-            /*Value* v = driver.context().get(*$1);
-            if(v == nullptr)//func name
-            {
-            }
-            else
-            {
-            }
-            DEL($1);*/
+
+from_import : T_IMPORT_FROM T_INDENTIFIER T_IMPORT_IMPORT func_return func_name T_OPERATOR_AS T_INDENTIFIER {
+                
+                //lib
+                Value* lib = driver.context().get(*$2);
+                if(lib == nullptr or (not lib->is_library()))
+                {
+                    utils::log::warning("import","Value",*$2,"is not of type library");
+                    DEL($2);//lib name
+                    DEL($4);//func type
+                    DEL($5);//func name
+                    DEL($7);//dest
+                    YYERROR;
+                }
+                DEL($2);//lib name
+                //get func
+                void* func = lib->as_library().get_f(*$5);
+                DEL($5);//func name
+
+                if(func == nullptr)
+                {
+                    DEL($4);//func type
+                    DEL($7);//dest
+                    YYERROR;
+                }
+                //store
+                Value* dest = driver.context().find(*$7);
+                if(dest != nullptr)
+                {
+                    utils::log::warning("Import","Name",*$7,"already exist in current context");
+                    DEL($4);//func type
+                    DEL($7);//dest
+                    YYERROR;
+                }
+                $4->set_f(func);
+                bool er = driver.context().create_value(*$7,$4);
+                DEL($7);
+                if (not er)
+                    YYERROR;
           }
           ;
+
+func_name : T_INDENTIFIER {
+            Value* func_name = driver.context().find(*$1);
+            if(func_name != nullptr)
+            {
+                if(not func_name->is_string())
+                {
+                    utils::log::warning("import","Value",*$1,"is not of type string");
+                    DEL($1);
+                    YYERROR;
+                }
+                $$ = new std::string(func_name->as_string());
+            }
+            else
+                $$ = $1;
+          }
+          | T_VALUE_STRING {
+            $$ = $1;
+          }
+          ;
+
 func_return : /* void */{$$=new icpp::Function<void>();}
             | T_TYPE_CHAR {$$=new icpp::Function<char>();}
             | T_TYPE_BOOL {$$=new icpp::Function<bool>();}
             | T_TYPE_INT {$$=new icpp::Function<int>();}
             | T_TYPE_STRING {$$=new icpp::Function<std::string>();}
+            ;
+
+func_call   : T_INDENTIFIER T_BRACKET_OPEN value_list T_BRACKET_CLOSE {
+                Value* func = driver.context().get(*$1);
+                if(func == nullptr)
+                {
+                    DEL($3);//params
+                    DEL($1);//func name
+                    YYERROR;
+                }
+                if(not func->is_function())
+                {
+                    utils::log::warning("import","Value",*$1,"is not of type function");
+                    DEL($1);//func name
+                    DEL($3);//params
+                    YYERROR;
+                }
+                DEL($1);//func name
+                $$= new Value(std::move(func->as_function().call(*$3)));
+                DEL($3);//params
+            }
             ;
 
 %%

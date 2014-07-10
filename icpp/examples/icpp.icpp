@@ -77,33 +77,16 @@ print "*******************************"
 file = "./libf"
 import file as test_f
 
-from test_f import test_print as p
-//from file import test_f as p
-//print p //function
-//show p //type : function, return: ???, param: ???
-//
-//from "f.cpp" import int print(int) as p
-//print p //function
-//show p //type : function, return: int, param: (int)
-//
+from test_f import int "test_print" as test_print
 
-//from "f.cpp" import int print(int*)
-//from "f.cpp" import int print(const string&)
-//from "f.cpp" import int print(int**)
-//from "f.cpp" import int print(int***)
-//from "f.cpp" import int print(int&&)
-//from "f.cpp" import int print(int,char,string)
-//
-//print "end test import"
-//print "end test import","blah"
-//print "blah",p,"blah"
-//
-//
-////print
-//print test //68
-//show test //type : int, value : 68
-//
-//
+print test_print //function
+show test_print //type : function, return: ???, param: ???
+
+print test_print(1)
+
+auto res = test_print(1)
+show res
+
 print "*******************************"
 print "********** BUILTINS ***********"
 print "*******************************"

@@ -11,7 +11,7 @@ namespace icpp
     {
     }
 
-    void VFunction::setf(void* f)
+    void VFunction::set_f(void* f)
     {
         func = f;
     }
@@ -66,35 +66,35 @@ namespace icpp
     }
 
     template<>
-    std::ostream& Function<bool>::print(std::ostream& out)const
+    std::ostream& Function<bool>::show(std::ostream& out)const
     {
         out<<"bool";
         return out;
     }
 
     template<>
-    std::ostream& Function<char>::print(std::ostream& out)const
+    std::ostream& Function<char>::show(std::ostream& out)const
     {
         out<<"char";
         return out;
     }
 
     template<>
-    std::ostream& Function<int>::print(std::ostream& out)const
+    std::ostream& Function<int>::show(std::ostream& out)const
     {
         out<<"int";
         return out;
     }
 
     template<>
-    std::ostream& Function<double>::print(std::ostream& out)const
+    std::ostream& Function<double>::show(std::ostream& out)const
     {
         out<<"float";
         return out;
     }
 
     template<>
-    std::ostream& Function<std::string>::print(std::ostream& out)const
+    std::ostream& Function<std::string>::show(std::ostream& out)const
     {
         out<<"string";
         return out;

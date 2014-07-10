@@ -16,9 +16,9 @@ namespace icpp
 
             virtual Value call(const std::list<Value>& params)const = 0;
 
-            virtual std::ostream& print(std::ostream& out)const = 0;
+            virtual std::ostream& show(std::ostream& out)const = 0;
 
-            void setf(void* func);
+            void set_f(void* func);
 
         protected:
             void* func;
@@ -38,7 +38,7 @@ namespace icpp
 
             virtual Value call(const std::list<Value>& params)const;
 
-            virtual std::ostream& print(std::ostream& out)const;
+            virtual std::ostream& show(std::ostream& out)const;
 
         protected:
             static void bind_ret(void* f,av_alist& p,Ret& res);

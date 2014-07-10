@@ -35,6 +35,11 @@ namespace icpp
         return type == Type::LIBRARY;
     }
 
+    inline bool Value::is_function()const
+    {
+        return type == Type::FUNCTION;
+    }
+
 
 
 
@@ -68,6 +73,11 @@ namespace icpp
     inline const utils::sys::Library& Value::as_library()const
     {
         return *v_library.get();
+    }
+
+    inline const VFunction& Value::as_function()const
+    {
+        return *v_function.get();
     }
 
 

@@ -66,7 +66,7 @@ namespace icpp
             inline double as_float()const;
             inline const std::string& as_string()const;
             inline const utils::sys::Library& as_library()const;
-            inline VFunction& as_function()const;
+            inline const VFunction& as_function()const;
 
             enum class Type {
                 BOOL,

@@ -417,7 +417,7 @@ namespace icpp
             case Type::LIBRARY:
                 out<<v_library->name();break;
             case Type::FUNCTION:
-                v_function->print(out);break;
+                out<<"function";break;
             case Type::NIL:
                 out<<"null";break;
             default:
@@ -444,7 +444,7 @@ namespace icpp
             case Type::LIBRARY:
                 out<<"library, value: "<<v_library->name();break;
             case Type::FUNCTION:
-                out<<"function, value : ";v_function->print(out);break;
+                out<<"function, return: ";v_function->show(out);break;
             case Type::NIL:
                 out<<"null";break;
             default:
