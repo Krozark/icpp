@@ -40,6 +40,7 @@
     #define DEBUG 1
 
     #define DEL(x) delete x; x=nullptr;
+    #define DEL_LIST_PTR(x) {for(auto ptr : *x)delete ptr;delete x;x=nullptr;}
 
     #define OUT std::cout
 
@@ -66,14 +67,12 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
     double          v_float;
     std::string*    v_string;
     icpp::Value*    v_value;
+    icpp::Value*    v_value_ref;
 
     std::list<icpp::Value>* v_list_value;
-    // Pointers to more complex classes
-    /*
-    utils::json::Object* v_object;
-    utils::json::Array* v_array;
-    utils::json::Value* v_value;
-    */
+    std::list<icpp::Value*>* v_list_value_ref;
+
+    std::list<std::string*>* v_list_string;
 
     utils::sys::Compiler*   v_compiler;
     icpp::VFunction*        v_function;
@@ -83,7 +82,6 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 /** Declare tokens */
     /* specials */
 %token      T_EOL                   "end of line"
-%token      T_EQUAL                 "symbol ="
 %token      T_COMA                  "symbol ,"
 %token      T_COLON                 "symbol :"
 %token      T_BRACKET_OPEN          "symbol ("
@@ -92,8 +90,13 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %token      T_SQUARE_BRACKET_CLOSE  "symbol ]"
 %token      T_CURLY_BRACKET_OPEN    "symbol {"
 %token      T_CURLY_BRACKET_CLOSE   "symbol }"
+    /* maths */
+%token      T_EQUAL                 "symbol ="
+%token      T_MATHS_ADD             "symbol +"
+%token      T_MATHS_SUB             "symbol -"
+%token      T_MATHS_DIV             "symbol /"
+%token      T_MATHS_MUL             "symbol *"
     /* pointer */
-%token      T_ASTERISK              "symbol *"
 %token      T_AMPERSAND             "symbol &"
     /* kewords */
 %token      T_EXIT                  "keyword exit"
@@ -147,9 +150,10 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %type<v_string>         func_name
     /* rules */
 %type<v_value>          value_tmp
-%type<v_value>          declaration
-%type<v_value>          declaration_and_affectation
+%type<v_value>          value
 %type<v_value>          func_call
+%type<v_value>          affectation
+%type<v_value>          declaration_and_affectation
 
 %type<v_list_value>     value_list
 
@@ -159,7 +163,17 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 
 %type<v_function>       func_return
 
-%destructor {delete $$;} <v_string> <v_value> <v_list_value>
+%type<v_list_string>    identifier_list
+
+%destructor {DEL($$)} <v_string> <v_value> <v_list_value> <v_list_value_ref> <v_compiler> <v_function>
+%destructor {DEL_LIST_PTR($$)} <v_list_string>
+
+    /* do not free it */
+%type<v_value_ref>      value_ref
+    /* delete the container */
+%type<v_list_value_ref>     declaration
+
+
 
 
 %%
@@ -176,153 +190,193 @@ statements : statement {}
            ;
 
 statement : T_EOL 
-          | T_INDENTIFIER T_EOL {
+          | value T_EOL {
             DEL($1);
-            utils::log::info("Usless","Line",icpp_line_no-1,"as no effect");
           }
           | declaration T_EOL
-          | declaration_and_affectation T_EOL
-          | affectation T_EOL
+            /* specials */
           | bultins T_EOL
           | import T_EOL
           | from_import T_EOL
-          | func_call T_EOL {DEL($1);}
           ;
 
-declaration : T_TYPE_CHAR T_INDENTIFIER {
-                bool p = driver.context().create_value(*$2,'0');
-                if(not p)
+declaration : T_TYPE_CHAR identifier_list {
+                $$=new std::list<Value*>;
+                for(std::string* v : *$2)
                 {
-                    DEL($2);
-                    YYERROR;
+                    bool p = driver.context().create_value(*v,'0');
+                    if(not p)
+                    {
+                        DEL_LIST_PTR($2);
+                        DEL($$);
+                        YYERROR;
+                    }
+                    $$->emplace_back(driver.context().get(*v));
                 }
-                $$=driver.context().get(*$2);
-                DEL($2);
+                DEL_LIST_PTR($2);
             }
-            | T_TYPE_BOOL T_INDENTIFIER {
-                bool p = driver.context().create_value(*$2,false);
-                if(not p)
+            | T_TYPE_BOOL identifier_list {
+                $$=new std::list<Value*>;
+                for(std::string* v : *$2)
                 {
-                    DEL($2);
-                    YYERROR;
+                    bool p = driver.context().create_value(*v,false);
+                    if(not p)
+                    {
+                        DEL_LIST_PTR($2);
+                        DEL($$);
+                        YYERROR;
+                    }
+                    $$->emplace_back(driver.context().get(*v));
                 }
-                $$=driver.context().get(*$2);
-                DEL($2);
+                DEL_LIST_PTR($2);
             }
-            | T_TYPE_INT T_INDENTIFIER {
-                bool p = driver.context().create_value(*$2,0);
-                if(not p)
+            | T_TYPE_INT identifier_list {
+                $$=new std::list<Value*>;
+                for(std::string* v : *$2)
                 {
-                    DEL($2);
-                    YYERROR;
+                    bool p = driver.context().create_value(*v,0);
+                    if(not p)
+                    {
+                        DEL_LIST_PTR($2);
+                        DEL($$);
+                        YYERROR;
+                    }
+                    $$->emplace_back(driver.context().get(*v));
                 }
-                $$=driver.context().get(*$2);
-                DEL($2);
+                DEL_LIST_PTR($2);
             }
-            | T_TYPE_FLOAT T_INDENTIFIER {
-                bool p = driver.context().create_value(*$2,0.f);
-                if(not p)
+            | T_TYPE_FLOAT identifier_list {
+                $$=new std::list<Value*>;
+                for(std::string* v : *$2)
                 {
-                    DEL($2);
-                    YYERROR;
+                    bool p = driver.context().create_value(*v,0.f);
+                    if(not p)
+                    {
+                        DEL_LIST_PTR($2);
+                        DEL($$);
+                        YYERROR;
+                    }
+                    $$->emplace_back(driver.context().get(*v));
                 }
-                $$=driver.context().get(*$2);
-                DEL($2);
+                DEL_LIST_PTR($2);
             }
-            | T_TYPE_STRING T_INDENTIFIER {
-                bool p = driver.context().create_value(*$2,std::string(""));
-                if(not p)
+            | T_TYPE_STRING identifier_list {
+                $$=new std::list<Value*>;
+                for(std::string* v : *$2)
                 {
-                    DEL($2);
-                    YYERROR;
+                    bool p = driver.context().create_value(*v,std::string());
+                    if(not p)
+                    {
+                        DEL_LIST_PTR($2);
+                        DEL($$);
+                        YYERROR;
+                    }
+                    $$->emplace_back(driver.context().get(*v));
                 }
-                $$=driver.context().get(*$2);
-                DEL($2);
+                DEL_LIST_PTR($2);
             }
             ;
 
-declaration_and_affectation : declaration T_EQUAL value_tmp {
-                                $1->convert_to(*$3);
-                                DEL($3);
-                            }
-                            | declaration T_EQUAL T_INDENTIFIER {
-                                icpp::Value* v = driver.context().get(*$3);
-                                DEL($3);
-                                if(v)
-                                {
-                                    $1->convert_to(*v);
-                                }
-                            }
-                            | T_TYPE_AUTO T_INDENTIFIER T_EQUAL value_tmp {
-                                driver.context().create_or_change_value(*$2,std::move(*$4));
-                                DEL($2);
-                                DEL($4);
+declaration_and_affectation : declaration T_EQUAL value {
+                                $$=$3;
+                                $3=nullptr;
+                                for(Value* ptr : *$1)
+                                    ptr->convert_to(*$$);
+                                *$$=*$1->front();
+                                DEL($1);
                             }
                             ;
 
-affectation : T_INDENTIFIER T_EQUAL value_tmp {
-                bool p = driver.context().change_value(*$1,std::move(*$3));
-                DEL($1);
-                DEL($3);
-                if(not p)
-                    YYERROR;
-            }
-            | T_INDENTIFIER T_EQUAL T_INDENTIFIER {
-                icpp::Value* v2 = driver.context().get(*$3);
-                if(v2 == nullptr)
+affectation : identifier_list T_EQUAL value {
+                $$=$3;
+                $3=nullptr;
+                for(std::string* v : *$1)
                 {
-                    DEL($1);
-                    DEL($3);
-                    YYERROR;
+                    bool p = driver.context().change_value(*v,*$$);
+                    if(not p)
+                    {
+                        DEL_LIST_PTR($1);
+                        DEL($$);
+                        YYERROR;
+                    }
                 }
-                bool p = driver.context().change_value(*$1,*v2);
-                DEL($1);
-                DEL($3);
-                if(not p)
-                    YYERROR;
+                DEL_LIST_PTR($1);
+            }
+            | T_TYPE_AUTO identifier_list T_EQUAL value {
+                $$=$4;
+                $4=nullptr;
+                for(std::string* v : *$2)
+                    driver.context().create_or_change_value(*v,*$$);
+                DEL_LIST_PTR($2);
             }
             ;
+
+identifier_list : T_INDENTIFIER {
+                    $$=new std::list<std::string*>;
+                    $$->emplace_back($1);
+                    $1=nullptr;
+                }
+                | identifier_list T_INDENTIFIER {
+                    $$=$1;
+                    $$->emplace_back($2);
+                    $1=nullptr;
+                    $2=nullptr;
+                }
+                ;
 
 value_tmp : T_VALUE_CHAR {$$=new icpp::Value($1);}
           | T_VALUE_BOOL {$$=new icpp::Value($1);}
           | T_VALUE_INT  {$$=new icpp::Value($1);}
           | T_VALUE_FLOAT {$$=new icpp::Value($1);}
-          | T_VALUE_STRING {$$=new icpp::Value(std::move(*$1));DEL($1);}
+          | T_VALUE_STRING {
+            $$=new icpp::Value(std::move(*$1));
+            DEL($1);
+          }
           | T_VALUE_NULL  {$$=new icpp::Value();}
-          | func_call {$$=$1;$1=nullptr;}
+          | func_call {
+            $$=$1;
+            $1=nullptr;
+          }
+          | affectation {
+            $$=$1;
+            $1=nullptr;
+          }
+          | declaration_and_affectation {
+            $$=$1;
+            $1=nullptr;
+          }
           ;
 
+value_ref : T_INDENTIFIER {
+            $$=nullptr;
+            Value* v = driver.context().get(*$1);
+            DEL($1);
+            if(v == nullptr)
+                YYERROR;
+            $$=v;
+          }
+          ;   
 
-value_list : value_tmp {
+value : value_tmp {
+        $$=$1;
+        $1=nullptr;
+      }
+      | value_ref {
+        $$=new Value(*$1);
+        $1=nullptr;
+      }
+      ;
+
+
+value_list : value {
                 $$=new std::list<icpp::Value>;
                 $$->emplace_back(*$1);
                 DEL($1);
            
-           }| T_INDENTIFIER {
-                icpp::Value* v = driver.context().get(*$1);
-                DEL($1);
-                if(v == nullptr)
-                {
-                    YYERROR;
-                }
-                $$=new std::list<icpp::Value>;
-                $$->emplace_back(*v);
            }
-           | value_list T_COMA value_tmp {
+           | value_list T_COMA value {
                 $$ = $1;
                 $1 = nullptr;
-                $$->emplace_back(*$3);
-                DEL($3);
-           }
-           | value_list T_COMA T_INDENTIFIER {
-                $$ = $1;
-                $1 = nullptr;
-                icpp::Value* v = driver.context().get(*$3);
-                if(v == nullptr)
-                {
-                    DEL($3);
-                    YYERROR;
-                }
                 $$->emplace_back(*$3);
                 DEL($3);
            }
@@ -367,20 +421,37 @@ delete : T_B_DELETE T_INDENTIFIER {
             if(not p)
                 YYERROR;
        }
+       | T_B_DELETE T_MATHS_MUL {
+            driver.context().clear();
+       }
        ;
 
 wget : T_B_WGET T_VALUE_STRING {
         utils::log::todo("wget","fonctionalaty not implemented");
+        DEL($2);
      }
      ;
 
 run : T_B_RUN T_INDENTIFIER {
         utils::log::todo("run","fonctionalaty not implemented");
+        DEL($2);
     }
     | T_B_RUN T_INDENTIFIER T_OPERATOR_AS T_INDENTIFIER {
         utils::log::todo("run","fonctionalaty not implemented");
+        DEL($2);
+        DEL($4);
     }
     ;
+
+source : T_B_SOURCE T_VALUE_STRING {
+            DEL($2);
+            utils::log::todo("run","fonctionalaty not implemented");
+       }
+       | T_B_SOURCE T_INDENTIFIER {
+            DEL($2);
+            utils::log::todo("run","fonctionalaty not implemented");
+       }
+       ;
 
 compile : compile_cmd_or_options T_OPERATOR_AS T_INDENTIFIER {
             Value* v = driver.context().find(*$3);
@@ -415,23 +486,23 @@ compile : compile_cmd_or_options T_OPERATOR_AS T_INDENTIFIER {
         ;
 
 compile_cmd_or_options : compile_cmd {
-                            $$ = $1;
-                            $1 = nullptr;
+                            $$=$1;
+                            $1=nullptr;
                        }
                        | compile_cmd_options {
-                            $$ = $1;
-                            $1 = nullptr;
+                            $$=$1;
+                            $1=nullptr;
                        }
                        ;
 
 
 compile_cmd_options : compile_cmd T_OPERATOR_WITH {
-                        $$ = $1;
-                        $1 = nullptr;
+                        $$=$1;
+                        $1=nullptr;
                     }
                     | compile_cmd_options T_INDENTIFIER T_BRACKET_OPEN value_list T_BRACKET_CLOSE {
-                        $$ = $1;
-                        $1 = nullptr;
+                        $$=$1;
+                        $1=nullptr;
                         if(*$2 == "flags")
                         {
                             for(const icpp::Value& v : *$4)
@@ -475,9 +546,10 @@ compile_cmd_options : compile_cmd T_OPERATOR_WITH {
                     ;
 
 compile_cmd : T_B_COMPILE value_list {
+            $$=nullptr;
             try {
                 utils::sys::Compiler* comp = new utils::sys::Compiler();
-                $$ = comp;
+                $$=comp;
                 for(const icpp::Value& v : *$2)
                 {
                     if(v.is_string())
@@ -491,7 +563,6 @@ compile_cmd : T_B_COMPILE value_list {
                 }
             } catch (std::runtime_error& e){
                 utils::log::error("compile",e.what());
-                $$ = nullptr;
                 DEL($2);
                 YYERROR;
             }
@@ -499,11 +570,6 @@ compile_cmd : T_B_COMPILE value_list {
         }
         ;
 
-source : T_B_SOURCE T_VALUE_STRING {
-       }
-       | T_B_SOURCE T_INDENTIFIER {
-       }
-       ;
 
 import : T_IMPORT_IMPORT T_VALUE_STRING T_OPERATOR_AS T_INDENTIFIER {
            Value* v = driver.context().find(*$4);
@@ -603,6 +669,7 @@ from_import : T_IMPORT_FROM T_INDENTIFIER T_IMPORT_IMPORT func_return func_name 
           ;
 
 func_name : T_INDENTIFIER {
+            $$=nullptr;
             Value* func_name = driver.context().find(*$1);
             if(func_name != nullptr)
             {
@@ -612,13 +679,16 @@ func_name : T_INDENTIFIER {
                     DEL($1);
                     YYERROR;
                 }
-                $$ = new std::string(func_name->as_string());
+                $$=new std::string(func_name->as_string());
+                DEL($1);
             }
             else
-                $$ = $1;
+                $$=$1;
+            $1=nullptr;
           }
           | T_VALUE_STRING {
-            $$ = $1;
+            $$=$1;
+            $1=nullptr;
           }
           ;
 
@@ -630,6 +700,7 @@ func_return : /* void */{$$=new icpp::Function<void>();}
             ;
 
 func_call   : T_INDENTIFIER T_BRACKET_OPEN value_list T_BRACKET_CLOSE {
+                $$=nullptr;
                 Value* func = driver.context().get(*$1);
                 if(func == nullptr)
                 {
@@ -645,7 +716,7 @@ func_call   : T_INDENTIFIER T_BRACKET_OPEN value_list T_BRACKET_CLOSE {
                     YYERROR;
                 }
                 DEL($1);//func name
-                $$= new Value(std::move(func->as_function().call(*$3)));
+                $$=new Value(std::move(func->as_function().call(*$3)));
                 DEL($3);//params
             }
             ;

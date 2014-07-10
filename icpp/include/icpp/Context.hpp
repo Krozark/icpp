@@ -36,17 +36,11 @@ namespace icpp
             template<typename T>
             bool change_value(const std::string& name,const T& val);
 
-            template<typename T>
-            bool change_value(const std::string& name,T&& val);
-
             /**
              * \return true if created, false else but do not failed
              */
             template<typename T>
             bool create_or_change_value(const std::string& name,const T& val);
-
-            template<typename T>
-            bool create_or_change_value(const std::string& name,T&& val);
 
 
             bool print(const std::string& identifier,std::ostream& out)const;
@@ -54,6 +48,8 @@ namespace icpp
 
             std::ostream& print(std::ostream& out)const;
             std::ostream& show(std::ostream& out)const;
+
+            void clear();
 
         private:
             friend class Driver;

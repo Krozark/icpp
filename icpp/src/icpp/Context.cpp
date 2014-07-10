@@ -141,4 +141,9 @@ namespace icpp
         return out;
     }
 
+    void Context::clear()
+    {
+        values.clear();
+    }
+
 }

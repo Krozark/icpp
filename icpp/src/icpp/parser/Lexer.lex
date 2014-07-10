@@ -31,9 +31,6 @@
 \/\/.*$ {
 }
 
-= {
-    return token::T_EQUAL;
-}
         /* separators */
 "," {
     return token::T_COMA;
@@ -67,10 +64,30 @@
     return token::T_CURLY_BRACKET_CLOSE;
 }
 
-        /* pointer */
-"*" {
-    return token::T_ASTERISK;
+        /* maths */
+= {
+    return token::T_EQUAL;
 }
+
+"+" {
+    return token::T_MATHS_ADD;
+}
+
+"-" {
+    return token::T_MATHS_SUB;
+}
+
+"/" {
+    return token::T_MATHS_DIV;
+}
+
+"*" {
+    return token::T_MATHS_MUL;
+}
+
+    /* % */
+
+        /* pointer */
 
 "&" {
     return token::T_AMPERSAND;
@@ -96,6 +113,8 @@ import {
 as {
     return token::T_OPERATOR_AS;
 }
+
+    /* and or xor not is is_not  */
 
 with {
     return token::T_OPERATOR_WITH;

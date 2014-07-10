@@ -8,6 +8,8 @@ c = 'c'
 print c
 show c
 
+
+
 print "******* create c2 **********"
 char c2 = 'd'
 print c2
@@ -28,23 +30,13 @@ string s = "string_test"
 
 auto n = null
 auto test = 68
-auto test = "pwet" //change type
+auto test = n //change type
 
-print "******* double declaration of i (will make a error) **********"
-int i = 72
 
-//
 //tuple l = (42,"13","srn",63.5)
 //tab t //= [44,43.5,"test"]
 //dict di //= {"blah" : 44, "bhal2" : 54.8, "blah3" : "truc"}
 
-print "*******************************"
-print "*********** PRINT *************"
-print "*******************************"
-//
-print "******* test print context **********"
-print
-print "******* test show context ***********"
 show
 
 print "********** delete test,s, c2,c3 *************"
@@ -54,7 +46,23 @@ delete s
 delete c2
 delete c3
 
-print
+print "******* double declaration of i (will make a error) **********"
+int i = 72
+
+
+print "******* clean context ********************"
+delete *
+
+print "************* multiple declaration **************"
+bool b1 b2 b3 = char c1 c2 c3 = int i1 i2 i3 = float f1 f2 f3 = string s1 s2 s3 = auto a1 a2 a3 = "43.9"
+
+print "test",string b = 42
+
+show
+
+print "******* clean context ********************"
+delete *
+
 
 print "*******************************"
 print "******* COMPILATION ***********"
@@ -68,21 +76,20 @@ string file = "f.cpp"
 
 compile file, "f2.cpp" with flags("-o3","-Wall") link("utils") as libf2
 
-//compile "127.0.0.1:8000/test.cpp" as libf5
 
 print "*******************************"
 print "********** IMPORT *************"
 print "*******************************"
 
 file = "./libf"
-import file as test_f
+import file as test_f //import compiled lib
 
 from test_f import int "test_print" as test_print
 
 print test_print //function
 show test_print //type : function, return: ???, param: ???
 
-print test_print(1)
+print test_print(789)
 
 auto res = test_print(1)
 show res
@@ -113,7 +120,7 @@ print "*******************************"
 //string source_file = "file.icpp"
 //source source_file
 //
-//
+//compile "127.0.0.1:8000/test.cpp" as libf5
 
 print "******** help *******"
 help
