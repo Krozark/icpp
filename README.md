@@ -1,7 +1,7 @@
 ICPP
 ====
 
-Version : 0.0.0
+Version : 0.1.0
 
 A script language project to dynamicly load library and use them at runtime.
 The main idea is to add the possibility to any programme to add fonctionality to himself at runtime.
@@ -11,7 +11,7 @@ Source files can be load from local path or from the internet.
 
 Can run function in thread.
 
-The interpreter can be control using the standar inptut or network.
+The interpreter can be control using file, the standard inptut or network (TODO).
 
 
 
