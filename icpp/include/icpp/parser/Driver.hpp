@@ -6,6 +6,8 @@
 #include <icpp/parser/Scanner.hpp>
 #include <icpp/Context.hpp>
 
+#define STOP_RETURN -3
+
 namespace icpp
 {
     /**
@@ -30,13 +32,14 @@ namespace icpp
 
             /**
              * \brief Parse all the input (until \0)
+             * on in interactive mod untile the end of statement
              */
             void parse();
 
-            /**
-             * \return true if the stream is a valid format, else, false.
-             */
-            bool isValid()const;
+            bool finish()const;
+            bool interactive()const;
+            void interactive(bool i);
+
 
         protected:
             friend class Parser;
@@ -50,9 +53,11 @@ namespace icpp
             Scanner scanner; ///< The lexer
             Parser parser; ///< The parser
 
-            bool validity;//< is valid
 
             Context* context_current;
+
+            bool _interactive;
+            bool _finish;
 
 
     };

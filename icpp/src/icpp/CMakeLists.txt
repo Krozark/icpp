@@ -1,6 +1,7 @@
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME})
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/${CMAKE_PROJECT_NAME})
 
+configure_file(${INCROOT}/defines.hpp.in ${INCROOT}/defines.hpp @ONLY)
 
 SET(BisonOutputSrc ${SRCROOT}/parser/Parser.cpp)
 set(BisonOutputInc ${SRCROOT}/parser/Parser.hpp)

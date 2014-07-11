@@ -37,12 +37,13 @@
 	/*Prototype for the yylex function*/
 	static int yylex(icpp::Parser::semantic_type* yylval, icpp::Scanner& scanner);
 
-    #define DEBUG 1
 
     #define DEL(x) delete x; x=nullptr;
     #define DEL_LIST_PTR(x) {for(auto ptr : *x)delete ptr;delete x;x=nullptr;}
 
     #define OUT std::cout
+
+    #define YYSTOP {yyresult=STOP_RETURN;goto yyreturn;}
 
 /* tuple : T_BRACKET_OPEN T_BRACKET_CLOSE
       ;
@@ -165,7 +166,6 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %right T_BRACKET_OPEN
 
 
-%start start
 /** Define types for union values */
     /* tokens */
 %type<v_char>           T_VALUE_CHAR
@@ -202,6 +202,7 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 %type<v_list_value_ref>     declaration
 
 
+%start start
 
 
 %%
@@ -209,12 +210,20 @@ tab : T_SQUARE_BRACKET_OPEN T_SQUARE_BRACKET_CLOSE
 start:  statements T_EXIT {
         YYACCEPT;
      }
+     | T_EXIT {
+        YYACCEPT;
+     }
      ;
 
 
-statements : statement {}
-           | statements statement {}
-           | error {error("Parse error");}
+statements : statement {
+                if(driver.interactive())
+                    YYSTOP;
+           }
+           | statements statement {
+                if(driver.interactive())
+                    YYSTOP;
+            }
            ;
 
 statement : T_EOL 
@@ -226,6 +235,7 @@ statement : T_EOL
           | bultins T_EOL
           | import T_EOL
           | from_import T_EOL
+          | error {error("Parse error");}
           ;
 
 declaration : T_TYPE_CHAR identifier_list {
@@ -828,7 +838,7 @@ operators : value T_MATHS_ADD value {
                 $1=nullptr;
                 DEL($3);
             }
-            |T_MATHS_SUB value %prec prec_sub_u {
+            | T_MATHS_SUB value %prec prec_sub_u {
                 $$=$2;
                 $2=nullptr;
             }

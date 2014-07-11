@@ -1,0 +1,10 @@
+#ifndef DEFINES_HPP
+#define DEFINES_HPP
+
+#define MAJOR_VERSION @VERSION_MAJOR@ //major version number (0..9999)
+#define MINOR_VERSION @VERSION_MINOR@ //minor version number (0..99)
+#define PATCH_VERSION @VERSION_PATCH@ //patch version number (0..99)
+
+#define VERSION ((MAJOR_VERSION*100*100)+(MINOR_VERSION*100)+PATCH_VERSION)
+
+#endif

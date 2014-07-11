@@ -85,6 +85,25 @@ namespace icpp
             std::string type_str()const;
 
             inline Type get_type()const;
+/*
+operators : value T_MATHS_ADD value {
+            | value T_MATHS_SUB value {
+            | value T_MATHS_DIV value {
+            | value T_MATHS_MUL value {
+            | value T_MATHS_MOD value {
+            | value T_MATHS_POWER value {
+            | value T_LOGICAL_AND value {
+            | value T_LOGICAL_OR value {
+            | value T_LOGICAL_XOR value {
+            | value T_LOGICAL_GT value {
+            | value T_LOGICAL_GTE value {
+            | value T_LOGICAL_LT value {
+            | value T_LOGICAL_LTE value {
+            | value T_LOGICAL_EQUALS value {
+            | value T_LOGICAL_NOT_EQUALS value {
+            | T_MATHS_SUB value %prec prec_sub_u {
+            | T_LOGICAL_NOT value {
+            */
 
         private:
             friend class VFunction;

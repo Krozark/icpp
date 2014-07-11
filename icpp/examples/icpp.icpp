@@ -47,7 +47,7 @@ delete c2
 delete c3
 
 print "******* double declaration of i (will make a error) **********"
-int i = 72
+int i = 72 = 3
 
 
 print "******* clean context ********************"

@@ -42,8 +42,9 @@ else()
 endif()
 
 find_library(LIB_AVCALL avcall)
+find_library(LIB_READLINE readline)
 find_library(LIB_UTILS utils)
-set(LIBS ${LIBS} ${LIB_AVCALL} ${LIB_UTILS})
+set(LIBS ${LIBS} ${LIB_AVCALL} ${LIB_READLINE} ${LIB_UTILS})
 
 #set(includepath "-I${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(DEFINES "")

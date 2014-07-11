@@ -4,7 +4,7 @@
 
 namespace icpp
 {
-    Driver::Driver(std::istream& in) : scanner(in), parser(scanner,*this), validity(true)
+    Driver::Driver(std::istream& in) : scanner(in), parser(scanner,*this), _interactive(false),_finish(false)
     {
         context_current = new Context;
     }
@@ -17,17 +17,32 @@ namespace icpp
 
     void Driver::parse()
     {
-        validity=true;
-        if(parser.parse() != 0)
+        int res = parser.parse();
+        if(res == 0)
+            _finish = true;
+        else if (res == STOP_RETURN)
+        {
+        }
+        else
         {
             utils::log::error("icpp::Driver","Parse failed");
-            validity=false;
         }
+
     }
 
-    bool Driver::isValid()const
+    bool Driver::finish()const
     {
-        return validity;
+        return _finish;
+    }
+
+    bool Driver::interactive()const
+    {
+        return _interactive;
+    }
+
+    void Driver::interactive(bool i)
+    {
+        _interactive = i;
     }
 
     Context& Driver::context()
