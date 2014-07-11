@@ -9,7 +9,6 @@ print c
 show c
 
 
-
 print "******* create c2 **********"
 char c2 = 'd'
 print c2
