@@ -4,12 +4,12 @@ Variable
 Types
 -----
 
-bool : boolean (true or false)
-char : character ('x')
-int  : integer number ([+-][0-9]+)
-float :  floating point number ([+-][0-9]*.[0-9]+)
-string : String ("value")
-auto : auto detect the type (boolean, char ...)
+* bool : boolean (true or false)
+* char : character ('x')
+* int  : integer number ([+-][0-9]+)
+* float :  floating point number ([+-][0-9]*.[0-9]+)
+* string : String ("value")
+* auto : auto detect the type (boolean, char ...)
 
 TODO
 
@@ -20,9 +20,9 @@ TODO
 Other type (not directly usable)
 --------------------------------
 
-null : null value
-function : callable variable. use it as name(params...) always return a value
-library : loaded system library
+* null : null value
+* function : callable variable. use it as name(params...) always return a value
+* library : loaded system library
 
 
 Operation
