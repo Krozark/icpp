@@ -32,7 +32,7 @@ Operation
 
 the return value type depend of the parameters
 
---------------------------------------------------------------------------------
++------------------------------------------------------------------------------+
 |left\right | bool   | char   | int    | float  | string | tuple | tab   | dic |
 |:----------------------------------------------------------------------------:|
 |    bool   | bool   |        |        |        |        |       |       |     |
@@ -43,7 +43,7 @@ the return value type depend of the parameters
 |    tuple  | tuple  | tuple  | tuple  | tuple  | tuple  | tuple | tuble |     |
 |    tab    | tab    | tab    | tab    | tab    | tab    | tab   | tab   |     | 
 |    dic    |  X     |    X   |   X    |    X   |    X   |   X   |   X   | dic |
---------------------------------------------------------------------------------
++------------------------------------------------------------------------------+
 
 
 not implemented
