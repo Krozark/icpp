@@ -94,6 +94,10 @@ INSTALL(TARGETS ${CMAKE_PROJECT_NAME}-static
     DESTINATION lib
 )
 
+#interpretor
+add_executable(icpp-interpretor icpp-interpretor.cpp)
+target_link_libraries(icpp-interpretor ${LIBS} ${CMAKE_PROJECT_NAME})
+
 
 file(GLOB DEPLOY_FILES_AND_DIRS "${PROJECT_SOURCE_DIR}/include/${CMAKE_PROJECT_NAME}/*")
 foreach(ITEM ${DEPLOY_FILES_AND_DIRS})
