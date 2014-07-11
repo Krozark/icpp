@@ -19,7 +19,11 @@ The interpreter can be control using the standar inptut or network.
 Requirement
 -----------
 
-* avcall (from ffcall package).
+* GNU avcall (from ffcall package).
 ** Include in dependancies directory.
 ** Can be install on ubuntu using libffcall1-dev
+* GNU readline
+** Include in dependancies directory.
+** http://savannah.gnu.org/git/?group=readline
+** Can be install on ubuntu using libreadline6-dev
 
