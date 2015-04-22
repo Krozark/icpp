@@ -72,7 +72,7 @@ type (name)+ = value
 A affectation is a value
 You can do :
 
-bool b1 b2 b3 = char c1 c2 c3 = int i1 i2 i3 = float f1 f2 f3 = string s1 s2 s3 = auto a1 a2 a3 = "43.9"
+    bool b1 b2 b3 = char c1 c2 c3 = int i1 i2 i3 = float f1 f2 f3 = string s1 s2 s3 = auto a1 a2 a3 = "43.9"
 
 
 Builtins
@@ -123,7 +123,7 @@ Produce a Library variable
 
 Usage:
 
-compile value_list + [with [flags(value_list)] [link(value_list)] ] as identifier
+    compile value_list + [with [flags(value_list)] [link(value_list)] ] as identifier
 
 The first value_list is the filename to use.
 flags specify optionals flags for the compilation (like "-o3", "-Wall")
@@ -149,7 +149,8 @@ import
 Load a library (.so/.dll) in the context as a variable
 
 usage:
-import libname as identifier
+
+    import libname as identifier
 
 identifer is the variable name where the library will be store
 
@@ -164,16 +165,9 @@ The result is a Variable function that is callable
 
 usage:
 
-from lib_var import (type)? funcname as identifer
+    from lib_var import (type)? funcname as identifer
 
 libvar have to be a valid Library variable
 type is optional and define the return type of the function. It can be bool, char,int, float or string
 funcname is the function name in the library code
 identifer is the name of the variable where the function will be store.
-
-
-
-
-
-
-
